@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	backupv1 "github.com/opdev/backup-handler/api"
+	backupv1 "github.com/opdev/backup-handler/api/v1"
 )
 
 func CreateBackup(backup *backupv1.Backup) error {

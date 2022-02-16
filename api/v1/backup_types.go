@@ -25,10 +25,10 @@ type Metadata struct {
 // Backup resource
 type Backup struct {
 	Metadata      `json:"metadata,omitempty"`
-	IsRunning     bool   `json:"is_running,omitempty"`
-	PodName       string `json:"pod_name,omitempty"`
-	ContainerName string `json:"container_name,omitempty"`
-	Command       string `json:"command,omitempty"`
+	IsRunning     bool     `json:"is_running,omitempty"`
+	PodName       string   `json:"pod_name,omitempty"`
+	ContainerName string   `json:"container_name,omitempty"`
+	Command       []string `json:"command,omitempty"`
 }
 
 // BackupList response object

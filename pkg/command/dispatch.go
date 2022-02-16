@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	backupv1 "github.com/opdev/backup-handler/api"
+	backupv1 "github.com/opdev/backup-handler/api/v1"
 )
 
 func BackupDispatch() {
@@ -76,7 +76,7 @@ func execBackup(backup backupv1.Backup) (*ExecResponse, error) {
 			Pod:       backup.PodName,
 			Container: backup.ContainerName,
 			Namespace: backup.Namespace,
-			Command:   []string{"date"},
+			Command:   backup.Command,
 		},
 	)
 }

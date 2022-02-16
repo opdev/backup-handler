@@ -7,11 +7,11 @@ import (
 	"log"
 	"net/http"
 
-	backupv1 "github.com/opdev/backup-handler/api"
-	"github.com/opdev/backup-handler/pkg/models"
 	"github.com/golang-migrate/migrate"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	backupv1 "github.com/opdev/backup-handler/api/v1"
+	"github.com/opdev/backup-handler/pkg/models"
 )
 
 func Start() error {
