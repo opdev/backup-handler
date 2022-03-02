@@ -2,11 +2,14 @@ package command
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path"
 	"time"
 
 	backupv1 "github.com/opdev/backup-handler/api/v1"
@@ -24,7 +27,10 @@ func BackupDispatch() {
 				log.Fatalf("error running backup; %v\n", err)
 			}
 
-			fmt.Println("stdout: ", results.Output())
+			if err := writeBackup(backup, results.Output()); err != nil {
+				log.Printf("error writing backup.\n%v.\n", err)
+			}
+
 			fmt.Println("stderr: ", results.Error())
 			if err := setBackupResults(backup); err != nil {
 				log.Println("error updating backup response.", err.Error())
@@ -38,6 +44,34 @@ func BackupDispatch() {
 		}
 		time.Sleep(3 * time.Second)
 	}
+}
+
+func writeBackup(backup *backupv1.Backup, output string) error {
+	var buffer bytes.Buffer
+	gw := gzip.NewWriter(&buffer)
+	gw.Comment = "Created by pachyderm backup helper"
+	gw.ModTime = time.Now().UTC()
+	gw.Name = fmt.Sprintf("%s-%s.sql", backup.Name, gw.ModTime.Format("200601021504"))
+
+	if _, err := gw.Write([]byte(output)); err != nil {
+		return err
+	}
+
+	if err := gw.Close(); err != nil {
+		return err
+	}
+
+	f, err := os.Create(path.Join("/", "tmp", fmt.Sprintf("%s.gz", gw.Name)))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.Write(buffer.Bytes()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func setBackupResults(backup *backupv1.Backup) error {
