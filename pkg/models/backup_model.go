@@ -30,6 +30,7 @@ func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) erro
 	}
 	defer db.Close()
 
+	backup.EncodeCmd()
 	results, err := stmt.ExecContext(ctx,
 		backup.CreatedAt,
 		backup.ID,
@@ -38,7 +39,7 @@ func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) erro
 		backup.IsRunning,
 		backup.PodName,
 		backup.ContainerName,
-		backup.Command,
+		backup.Cmd,
 	)
 	if err != nil {
 		return err
@@ -74,10 +75,11 @@ func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
 		&backup.IsRunning,
 		&backup.PodName,
 		&backup.ContainerName,
-		&backup.Command,
+		&backup.Cmd,
 	); err != nil {
 		return err
 	}
+	backup.DecodeCmd()
 
 	return nil
 }
@@ -106,13 +108,14 @@ func updateBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int
 	defer db.Close()
 	defer stmt.Close()
 
+	backup.EncodeCmd()
 	results, err := stmt.ExecContext(ctx,
 		backup.UpdatedAt,
 		backup.Name,
 		backup.IsRunning,
 		backup.PodName,
 		backup.ContainerName,
-		backup.Command,
+		backup.Cmd,
 		backup.ID,
 	)
 	if err != nil {
@@ -190,12 +193,13 @@ container_name, command FROM backups WHERE deleted_at is null ORDER BY created_a
 			&backup.IsRunning,
 			&backup.PodName,
 			&backup.ContainerName,
-			&backup.Command,
+			&backup.Cmd,
 		)
 		if err != nil {
 			return nil, err
 		}
-		backups.Items = append(backups.Items, backup)
+		backup.DecodeCmd()
+		backups.Items = append(backups.Items, &backup)
 	}
 	if err := results.Err(); err != nil {
 		return nil, err
