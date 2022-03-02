@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/base64"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -29,11 +31,13 @@ type Backup struct {
 	PodName       string   `json:"pod_name,omitempty"`
 	ContainerName string   `json:"container_name,omitempty"`
 	Command       []string `json:"command,omitempty"`
+	// cmd is used internally to store command as string
+	Cmd string `json:"-"`
 }
 
 // BackupList response object
 type BackupList struct {
-	Items []Backup `json:"items,omitempty"`
+	Items []*Backup `json:"items,omitempty"`
 }
 
 func (b *Backup) New() {
@@ -52,4 +56,24 @@ func (b *Backup) SetDeletedTime() {
 func utcTime() *time.Time {
 	utc := time.Now().UTC()
 	return &utc
+}
+
+// Takes the Backup.Command value of time []string
+// and stores it to Backup.cmd as a base64 encoded string.
+func (b *Backup) EncodeCmd() {
+	var tmp []string
+	for _, s := range b.Command {
+		tmp = append(tmp, base64.StdEncoding.EncodeToString([]byte(s)))
+	}
+	b.Cmd = strings.Join(tmp, ".")
+}
+
+// Decodes the contents of Backup.cmd and stores it to Backup.Command of type
+// []string
+func (b *Backup) DecodeCmd() {
+	b.Command = []string{}
+	for _, s := range strings.Split(b.Cmd, ".") {
+		payload, _ := base64.StdEncoding.DecodeString(s)
+		b.Command = append(b.Command, string(payload))
+	}
 }

@@ -106,7 +106,6 @@ func deleteBackup(w http.ResponseWriter, r *http.Request) {
 	if err != nil || records == 0 {
 		log.Println("error deleting backup: ", err.Error())
 	}
-	fmt.Println(records)
 
 	json.NewEncoder(w).Encode(backup)
 }

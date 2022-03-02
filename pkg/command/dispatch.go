@@ -1,7 +1,9 @@
 package command
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,40 +18,84 @@ func BackupDispatch() {
 	for {
 		backups := fetchBackupBatch()
 
-		log.Printf("%d backups received", len(backups.Items))
 		for _, backup := range backups.Items {
 			results, err := execBackup(backup)
 			if err != nil {
 				log.Fatalf("error running backup; %v\n", err)
 			}
 
-			log.Printf("stdout: %s | stderr: %s", results.Output(), results.Error())
+			fmt.Println("stdout: ", results.Output())
+			fmt.Println("stderr: ", results.Error())
+			if err := setBackupResults(backup); err != nil {
+				log.Println("error updating backup response.", err.Error())
+			}
 
+			if err := markBackupCompleted(backup); err != nil {
+				log.Fatal("error marking backup completed")
+			}
+
+			log.Printf("backup %s has completed.", backup.ID.String())
 		}
 		time.Sleep(3 * time.Second)
 	}
 }
 
-// func markBackupRunning() {}
+func setBackupResults(backup *backupv1.Backup) error {
+	payload, err := json.Marshal(backup)
+	if err != nil {
+		return err
+	}
 
-// func markBackupCompleted() {}
+	request, err := http.NewRequest(http.MethodPut, "http://localhost:8890/backup", bytes.NewBuffer(payload))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-Type", "application/json")
+	defer request.Body.Close()
 
-// func isAlive() {
-// 	backOffTimes := []time.Duration{
-// 		1 * time.Second,
-// 		3 * time.Second,
-// 		5 * time.Second,
-// 	}
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
 
-// 	for _, backoff := range backOffTimes {
-// 		func() {
-// 			_, err := http.Get("http://localhost:8890/next-batch")
-// 			if err != nil {
-// 				time.Sleep(backoff)
-// 			}
-// 		}()
-// 	}
-// }
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &backup); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func markBackupCompleted(backup *backupv1.Backup) error {
+	url := fmt.Sprintf("http://localhost:8890/backup/%s", backup.ID.String())
+	request, err := http.NewRequest(http.MethodDelete, url, nil)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(body, &backup); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func fetchBackupBatch() backupv1.BackupList {
 	resp, err := http.Get("http://localhost:8890/next-batch")
@@ -70,7 +116,7 @@ func fetchBackupBatch() backupv1.BackupList {
 	return backups
 }
 
-func execBackup(backup backupv1.Backup) (*ExecResponse, error) {
+func execBackup(backup *backupv1.Backup) (*ExecResponse, error) {
 	return ExecuteCommand(
 		ExecOptions{
 			Pod:       backup.PodName,
