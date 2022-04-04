@@ -33,6 +33,10 @@ type Backup struct {
 	Command       []string `json:"command,omitempty"`
 	// cmd is used internally to store command as string
 	Cmd string `json:"-"`
+	// Name of secret containing S3 storage credentials
+	UploadSecret string `json:"upload_secret,omitempty"`
+	// UploadLocation returns the URL to the upload location
+	UploadLocation string `json:"upload_location,omitempty"`
 }
 
 // BackupList response object

@@ -12,7 +12,12 @@ import (
 	"path"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	backupv1 "github.com/opdev/backup-handler/api/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 func BackupDispatch() {
@@ -68,6 +73,16 @@ func writeBackup(backup *backupv1.Backup, output string) error {
 	defer f.Close()
 
 	if _, err := f.Write(buffer.Bytes()); err != nil {
+		return err
+	}
+
+	response, err := uploadBackup(backup.UploadSecret, backup.Namespace, f)
+	if err != nil {
+		return err
+	}
+	backup.UploadLocation = response.Location
+
+	if err = os.Remove(f.Name()); err != nil {
 		return err
 	}
 
@@ -157,6 +172,45 @@ func execBackup(backup *backupv1.Backup) (*ExecResponse, error) {
 			Container: backup.ContainerName,
 			Namespace: backup.Namespace,
 			Command:   backup.Command,
+		},
+	)
+}
+
+func uploadBackup(name, namespace string, f *os.File) (*s3manager.UploadOutput, error) {
+	creds, err := getUploadCredentials(
+		types.NamespacedName{
+			Name:      name,
+			Namespace: namespace,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	_session, err := creds.awsSession()
+	if err != nil {
+		return nil, err
+	}
+
+	uploader := s3manager.NewUploader(_session)
+	return uploader.Upload(
+		&s3manager.UploadInput{
+			Bucket: aws.String(creds.bucket),
+			Key:    aws.String(f.Name()),
+			Body:   f,
+		},
+	)
+}
+
+func (r *uploadCredentials) awsSession() (*session.Session, error) {
+	return session.NewSession(
+		&aws.Config{
+			Region: aws.String(r.region),
+			Credentials: credentials.NewStaticCredentials(
+				r.accessID,
+				r.accessSecret,
+				"",
+			),
 		},
 	)
 }

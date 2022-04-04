@@ -8,5 +8,7 @@ CREATE TABLE backups (
     is_running integer(1),
     pod_name varchar(60),
     container_name varchar(60),
-    command varchar(256)
+    command varchar(256),
+    upload_location varchar(256),
+    upload_secret varchar(128)
 );
