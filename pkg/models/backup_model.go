@@ -23,7 +23,7 @@ func CreateBackup(backup *backupv1.Backup) error {
 }
 
 func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
-	query := "INSERT INTO backups(created_at, id, name, namespace, is_running, pod_name, container_name, command) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
+	query := "INSERT INTO backups(created_at, id, name, namespace, is_running, pod_name, container_name, command, upload_secret) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return err
@@ -40,6 +40,7 @@ func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) erro
 		backup.PodName,
 		backup.ContainerName,
 		backup.Cmd,
+		backup.UploadSecret,
 	)
 	if err != nil {
 		return err
@@ -63,7 +64,7 @@ func GetBackup(backup *backupv1.Backup) error {
 }
 
 func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
-	query := "SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name, container_name, command FROM backups WHERE id = ?"
+	query := "SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name, container_name, command, upload_location, upload_secret FROM backups WHERE id = ?"
 	row := db.QueryRowContext(ctx, query, backup.ID)
 	if err := row.Scan(
 		&backup.CreatedAt,
@@ -76,6 +77,8 @@ func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
 		&backup.PodName,
 		&backup.ContainerName,
 		&backup.Cmd,
+		backup.UploadLocation,
+		backup.UploadSecret,
 	); err != nil {
 		return err
 	}
@@ -100,7 +103,7 @@ func UpdateBackup(backup *backupv1.Backup) (int64, error) {
 
 // TODO: cleanup function implementation
 func updateBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int64, error) {
-	query := "UPDATE backups SET updated_at = ?, name = ?,  is_running = ?,  pod_name = ?,  container_name = ?, command = ? WHERE id = ?"
+	query := "UPDATE backups SET updated_at = ?, name = ?,  is_running = ?,  pod_name = ?,  container_name = ?, command = ?, upload_location = ?, upload_secret = ? WHERE id = ?"
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -116,6 +119,8 @@ func updateBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int
 		backup.PodName,
 		backup.ContainerName,
 		backup.Cmd,
+		backup.UploadLocation,
+		backup.UploadSecret,
 		backup.ID,
 	)
 	if err != nil {
@@ -173,7 +178,7 @@ func BackupBatch() (*backupv1.BackupList, error) {
 
 func nextBackupBatch(ctx context.Context, db *sql.DB) (*backupv1.BackupList, error) {
 	query := `SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name,
-container_name, command FROM backups WHERE deleted_at is null ORDER BY created_at ASC LIMIT 5`
+container_name, command, upload_secret FROM backups WHERE deleted_at is null ORDER BY created_at ASC LIMIT 5`
 	results, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -194,6 +199,7 @@ container_name, command FROM backups WHERE deleted_at is null ORDER BY created_a
 			&backup.PodName,
 			&backup.ContainerName,
 			&backup.Cmd,
+			&backup.UploadSecret,
 		)
 		if err != nil {
 			return nil, err

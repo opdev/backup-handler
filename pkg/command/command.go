@@ -2,10 +2,13 @@ package command
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"path/filepath"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -101,5 +104,49 @@ func ExecuteCommand(options ExecOptions) (*ExecResponse, error) {
 	return &ExecResponse{
 		stdout: stdout.String(),
 		stderr: stderr.String(),
+	}, nil
+}
+
+func getSecret(secret types.NamespacedName) (*corev1.Secret, error) {
+	config, err := kubeConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := kubeClient(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.
+		CoreV1().
+		Secrets(secret.Namespace).
+		Get(context.Background(), secret.Name,
+			metav1.GetOptions{
+				TypeMeta: metav1.TypeMeta{
+					Kind: "Secret",
+				},
+			},
+		)
+}
+
+type uploadCredentials struct {
+	bucket       string
+	region       string
+	accessID     string
+	accessSecret string
+}
+
+func getUploadCredentials(secretKey types.NamespacedName) (*uploadCredentials, error) {
+	secret, err := getSecret(secretKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return &uploadCredentials{
+		bucket:       secret.StringData["bucket"],
+		region:       secret.StringData["region"],
+		accessID:     secret.StringData["access-id"],
+		accessSecret: secret.StringData["access-secret"],
 	}, nil
 }
