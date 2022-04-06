@@ -3,6 +3,7 @@ package command
 import (
 	"bytes"
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 
@@ -143,10 +144,30 @@ func getUploadCredentials(secretKey types.NamespacedName) (*uploadCredentials, e
 		return nil, err
 	}
 
-	return &uploadCredentials{
-		bucket:       secret.StringData["bucket"],
-		region:       secret.StringData["region"],
-		accessID:     secret.StringData["access-id"],
-		accessSecret: secret.StringData["access-secret"],
-	}, nil
+	uploadCreds := &uploadCredentials{}
+	bucket, ok := secret.Data["bucket"]
+	if !ok {
+		return nil, errors.New("missing S3 bucket name")
+	}
+	uploadCreds.bucket = string(bucket)
+
+	region, ok := secret.Data["region"]
+	if !ok {
+		return nil, errors.New("missing S3 bucket")
+	}
+	uploadCreds.region = string(region)
+
+	accessID, ok := secret.Data["access-id"]
+	if !ok {
+		return nil, errors.New("missing S3 access ID")
+	}
+	uploadCreds.accessID = string(accessID)
+
+	accessSecret, ok := secret.Data["access-secret"]
+	if !ok {
+		return nil, errors.New("missing S3 access secret key")
+	}
+	uploadCreds.accessSecret = string(accessSecret)
+
+	return uploadCreds, nil
 }

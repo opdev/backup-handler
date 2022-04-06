@@ -15,7 +15,7 @@ ENV USER_ID=1009
 WORKDIR /
 COPY --from=builder /app/backup-handler .
 COPY migrations migrations
-RUN mkdir -p -m 775 /var/backup-handler && microdnf install curl && microdnf clean all
+RUN mkdir -p -m 775 /var/backup-handler && microdnf install curl sqlite && microdnf clean all
 USER ${USER_ID}
 CMD ["/backup-handler"]
 EXPOSE 8890

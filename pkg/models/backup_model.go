@@ -23,7 +23,8 @@ func CreateBackup(backup *backupv1.Backup) error {
 }
 
 func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
-	query := "INSERT INTO backups(created_at, id, name, namespace, is_running, pod_name, container_name, command, upload_secret) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	query := `INSERT INTO backups(created_at, id, name, namespace, is_running, pod_name, container_name,
+command, upload_secret) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return err
@@ -47,7 +48,11 @@ func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) erro
 	}
 	defer stmt.Close()
 
-	if count, _ := results.RowsAffected(); count == 0 {
+	count, err := results.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
 		return errors.New("error adding record")
 	}
 
@@ -64,7 +69,9 @@ func GetBackup(backup *backupv1.Backup) error {
 }
 
 func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
-	query := "SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name, container_name, command, upload_location, upload_secret FROM backups WHERE id = ?"
+	query := `SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name, container_name,
+command, upload_location, upload_secret FROM backups WHERE id = ?`
+	var location sql.NullString
 	row := db.QueryRowContext(ctx, query, backup.ID)
 	if err := row.Scan(
 		&backup.CreatedAt,
@@ -77,12 +84,18 @@ func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
 		&backup.PodName,
 		&backup.ContainerName,
 		&backup.Cmd,
-		backup.UploadLocation,
-		backup.UploadSecret,
+		&location,
+		&backup.UploadSecret,
 	); err != nil {
 		return err
 	}
 	backup.DecodeCmd()
+
+	// Bug Fix: use location place holder since backup.UploadLocation could be NULL
+	// This is needed since the database/sql package can not handle NULL values
+	if location.Valid {
+		backup.UploadLocation = location.String
+	}
 
 	return nil
 }
@@ -103,7 +116,8 @@ func UpdateBackup(backup *backupv1.Backup) (int64, error) {
 
 // TODO: cleanup function implementation
 func updateBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int64, error) {
-	query := "UPDATE backups SET updated_at = ?, name = ?,  is_running = ?,  pod_name = ?,  container_name = ?, command = ?, upload_location = ?, upload_secret = ? WHERE id = ?"
+	query := `UPDATE backups SET updated_at = ?, name = ?,  is_running = ?,  pod_name = ?,  container_name = ?,
+command = ?, upload_location = ?, upload_secret = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -145,7 +159,7 @@ func DeleteBackup(backup *backupv1.Backup) (int64, error) {
 }
 
 func deleteBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int64, error) {
-	query := "UPDATE backups SET deleted_at = ? WHERE id = ?"
+	query := `UPDATE backups SET deleted_at = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -155,7 +169,8 @@ func deleteBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int
 
 	results, err := stmt.ExecContext(ctx,
 		backup.DeletedAt,
-		backup.ID)
+		backup.ID,
+	)
 	if err != nil {
 		return 0, err
 	}

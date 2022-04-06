@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -36,7 +37,10 @@ func BackupDispatch() {
 				log.Printf("error writing backup.\n%v.\n", err)
 			}
 
-			fmt.Println("stderr: ", results.Error())
+			if stderr := results.Error(); stderr != "" {
+				log.Printf("stderr: %s\n", stderr)
+			}
+
 			if err := setBackupResults(backup); err != nil {
 				log.Println("error updating backup response.", err.Error())
 			}
@@ -76,7 +80,7 @@ func writeBackup(backup *backupv1.Backup, output string) error {
 		return err
 	}
 
-	response, err := uploadBackup(backup.UploadSecret, backup.Namespace, f)
+	response, err := uploadBackup(backup.UploadSecret, backup.Namespace, f.Name())
 	if err != nil {
 		return err
 	}
@@ -176,7 +180,7 @@ func execBackup(backup *backupv1.Backup) (*ExecResponse, error) {
 	)
 }
 
-func uploadBackup(name, namespace string, f *os.File) (*s3manager.UploadOutput, error) {
+func uploadBackup(name, namespace, backupName string) (*s3manager.UploadOutput, error) {
 	creds, err := getUploadCredentials(
 		types.NamespacedName{
 			Name:      name,
@@ -192,11 +196,17 @@ func uploadBackup(name, namespace string, f *os.File) (*s3manager.UploadOutput, 
 		return nil, err
 	}
 
+	f, err := os.Open(backupName)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
 	uploader := s3manager.NewUploader(_session)
 	return uploader.Upload(
 		&s3manager.UploadInput{
 			Bucket: aws.String(creds.bucket),
-			Key:    aws.String(f.Name()),
+			Key:    aws.String(path.Join("/", "backups", filepath.Base(f.Name()))),
 			Body:   f,
 		},
 	)
