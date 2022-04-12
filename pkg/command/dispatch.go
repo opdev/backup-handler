@@ -56,6 +56,7 @@ func BackupDispatch() {
 }
 
 func writeBackup(backup *backupv1.Backup, output string) error {
+	fmt.Println(backup.Resource)
 	var buffer bytes.Buffer
 	gw := gzip.NewWriter(&buffer)
 	gw.Comment = "Created by pachyderm backup helper"

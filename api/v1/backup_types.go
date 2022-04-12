@@ -37,6 +37,8 @@ type Backup struct {
 	UploadSecret string `json:"upload_secret,omitempty"`
 	// UploadLocation returns the URL to the upload location
 	UploadLocation string `json:"upload_location,omitempty"`
+	// Resource is the kubernetes resource to backup
+	Resource string `json:"kube_resource,omitempty"`
 }
 
 // BackupList response object
