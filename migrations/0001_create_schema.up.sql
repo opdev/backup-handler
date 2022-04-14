@@ -10,5 +10,6 @@ CREATE TABLE backups (
     container_name varchar(60),
     command varchar(256),
     upload_location varchar(256),
-    upload_secret varchar(128)
+    upload_secret varchar(128),
+    kube_resource varchar
 );
