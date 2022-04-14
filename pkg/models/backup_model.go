@@ -24,7 +24,7 @@ func CreateBackup(backup *backupv1.Backup) error {
 
 func createBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
 	query := `INSERT INTO backups(created_at, id, name, namespace, is_running, pod_name, container_name,
-command, upload_secret) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+command, upload_secret, kube_resource) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return err
@@ -42,6 +42,7 @@ command, upload_secret) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
 		backup.ContainerName,
 		backup.Cmd,
 		backup.UploadSecret,
+		backup.Resource,
 	)
 	if err != nil {
 		return err
@@ -70,7 +71,7 @@ func GetBackup(backup *backupv1.Backup) error {
 
 func getBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) error {
 	query := `SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name, container_name,
-command, upload_location, upload_secret FROM backups WHERE id = ?`
+command, upload_location, upload_secret, kube_resource FROM backups WHERE id = ?`
 	var location sql.NullString
 	row := db.QueryRowContext(ctx, query, backup.ID)
 	if err := row.Scan(
@@ -86,6 +87,7 @@ command, upload_location, upload_secret FROM backups WHERE id = ?`
 		&backup.Cmd,
 		&location,
 		&backup.UploadSecret,
+		&backup.Resource,
 	); err != nil {
 		return err
 	}
@@ -117,7 +119,7 @@ func UpdateBackup(backup *backupv1.Backup) (int64, error) {
 // TODO: cleanup function implementation
 func updateBackup(ctx context.Context, db *sql.DB, backup *backupv1.Backup) (int64, error) {
 	query := `UPDATE backups SET updated_at = ?, name = ?,  is_running = ?,  pod_name = ?,  container_name = ?,
-command = ?, upload_location = ?, upload_secret = ? WHERE id = ?`
+command = ?, upload_location = ?, upload_secret = ?, kube_resource = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -135,6 +137,7 @@ command = ?, upload_location = ?, upload_secret = ? WHERE id = ?`
 		backup.Cmd,
 		backup.UploadLocation,
 		backup.UploadSecret,
+		backup.Resource,
 		backup.ID,
 	)
 	if err != nil {
@@ -193,7 +196,7 @@ func BackupBatch() (*backupv1.BackupList, error) {
 
 func nextBackupBatch(ctx context.Context, db *sql.DB) (*backupv1.BackupList, error) {
 	query := `SELECT created_at, updated_at, deleted_at, id, name, namespace, is_running, pod_name,
-container_name, command, upload_secret FROM backups WHERE deleted_at is null ORDER BY created_at ASC LIMIT 5`
+container_name, command, upload_secret, kube_resource FROM backups WHERE deleted_at is null ORDER BY created_at ASC LIMIT 5`
 	results, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -215,6 +218,7 @@ container_name, command, upload_secret FROM backups WHERE deleted_at is null ORD
 			&backup.ContainerName,
 			&backup.Cmd,
 			&backup.UploadSecret,
+			&backup.Resource,
 		)
 		if err != nil {
 			return nil, err

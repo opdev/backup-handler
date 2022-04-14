@@ -2,7 +2,7 @@ package command
 
 import (
 	"bytes"
-	"compress/gzip"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -18,6 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	backupv1 "github.com/opdev/backup-handler/api/v1"
+	"github.com/walle/targz"
 	"k8s.io/apimachinery/pkg/types"
 )
 
@@ -56,38 +58,60 @@ func BackupDispatch() {
 }
 
 func writeBackup(backup *backupv1.Backup, output string) error {
-	fmt.Println(backup.Resource)
-	var buffer bytes.Buffer
-	gw := gzip.NewWriter(&buffer)
-	gw.Comment = "Created by pachyderm backup helper"
-	gw.ModTime = time.Now().UTC()
-	gw.Name = fmt.Sprintf("%s-%s.sql", backup.Name, gw.ModTime.Format("200601021504"))
+	var t time.Time = time.Now().UTC()
+	timestamp := t.Format("200601021504")
+	backupDir := path.Join(
+		os.TempDir(),
+		strings.Join([]string{"pachyderm-backup", timestamp}, "-"),
+	)
+	backupTarball := path.Join(
+		os.TempDir(),
+		fmt.Sprintf("%s.tar.gz", backupDir),
+	)
 
-	if _, err := gw.Write([]byte(output)); err != nil {
+	// create temp directory to hold backup
+	if err := os.Mkdir(backupDir, 0750); err != nil {
 		return err
 	}
 
-	if err := gw.Close(); err != nil {
-		return err
-	}
-
-	f, err := os.Create(path.Join("/", "tmp", fmt.Sprintf("%s.gz", gw.Name)))
+	// write the custom resource to the file cr.yaml
+	crData, err := base64.StdEncoding.DecodeString(backup.Resource)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	cr, err := os.Create(path.Join(backupDir, "cr.json"))
+	if err != nil {
+		return err
+	}
+	if _, err := cr.Write(crData); err != nil {
+		return err
+	}
+	defer cr.Close()
 
-	if _, err := f.Write(buffer.Bytes()); err != nil {
+	dump, err := os.Create(path.Join(backupDir, "database.sql"))
+	if err != nil {
+		return err
+	}
+	if _, err := dump.Write([]byte(output)); err != nil {
+		return err
+	}
+	defer dump.Close()
+
+	if err := targz.Compress(backupDir, backupTarball); err != nil {
 		return err
 	}
 
-	response, err := uploadBackup(backup.UploadSecret, backup.Namespace, f.Name())
+	response, err := uploadBackup(backup.UploadSecret, backup.Namespace, backupTarball)
 	if err != nil {
 		return err
 	}
 	backup.UploadLocation = response.Location
 
-	if err = os.Remove(f.Name()); err != nil {
+	if err = os.Remove(backupTarball); err != nil {
+		return err
+	}
+
+	if err := os.RemoveAll(backupDir); err != nil {
 		return err
 	}
 

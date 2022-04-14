@@ -10,10 +10,13 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.11
 	k8s.io/api v0.23.5
 	k8s.io/client-go v0.23.5
-	k8s.io/kubectl v0.23.3
+	k8s.io/kubectl v0.23.5
 )
 
-require github.com/jmespath/go-jmespath v0.4.0 // indirect
+require (
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/walle/targz v0.0.0-20140417120357-57fe4206da5a // indirect
+)
 
 require (
 	github.com/aws/aws-sdk-go v1.43.31
@@ -52,5 +55,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
-
-replace github.com/googleapis/gnostic => github.com/google/gnostic v0.6.8
