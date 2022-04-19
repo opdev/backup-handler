@@ -27,6 +27,9 @@ func Start() error {
 	r.HandleFunc("/backup/{id}", deleteBackup).Methods(http.MethodDelete)
 	r.HandleFunc("/next-batch", backupScheduler).Methods(http.MethodGet)
 
+	r.HandleFunc("/restore", createRestore).Methods(http.MethodPost)
+	r.HandleFunc("/restore/{id}", getRestore).Methods(http.MethodGet)
+
 	log.Println("Starting API...")
 	return http.ListenAndServe(":8890", r)
 }
@@ -119,4 +122,41 @@ func backupScheduler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(jobs)
+}
+
+func createRestore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	restore := &backupv1.Restore{}
+	if err := json.NewDecoder(r.Body).Decode(restore); err != nil {
+		fmt.Printf("error: %v\n", err)
+	}
+
+	if err := models.CreateRestore(restore); err != nil {
+		fmt.Println(err.Error())
+	}
+
+	json.NewEncoder(w).Encode(restore)
+}
+
+func getRestore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+	id, ok := params["id"]
+	if !ok {
+		fmt.Println("id not found")
+	}
+
+	restore := &backupv1.Restore{
+		Metadata: backupv1.Metadata{
+			ID: uuid.MustParse(id),
+		},
+	}
+
+	if err := models.GetRestore(restore); err != nil {
+		fmt.Fprint(w, err.Error())
+	}
+
+	json.NewEncoder(w).Encode(restore)
 }
