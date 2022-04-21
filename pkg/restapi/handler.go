@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	backupv1 "github.com/opdev/backup-handler/api/v1"
+	"github.com/opdev/backup-handler/pkg/command"
 	"github.com/opdev/backup-handler/pkg/models"
 )
 
@@ -130,6 +131,10 @@ func createRestore(w http.ResponseWriter, r *http.Request) {
 	restore := &backupv1.Restore{}
 	if err := json.NewDecoder(r.Body).Decode(restore); err != nil {
 		fmt.Printf("error: %v\n", err)
+	}
+
+	if err := command.StartRestore(restore); err != nil {
+		fmt.Println(err.Error())
 	}
 
 	if err := models.CreateRestore(restore); err != nil {

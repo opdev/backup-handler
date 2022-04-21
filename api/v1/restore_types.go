@@ -10,6 +10,8 @@ type Restore struct {
 	// Destination refers to name and namespace to which the
 	// backup object would be restored to
 	Destination `json:"destination,omitempty"`
+	// Name of the kubernetes secret containing S3 storage credentials
+	StorageSecret string `json:"storageSecret,omitempty"`
 }
 
 type Destination struct {
