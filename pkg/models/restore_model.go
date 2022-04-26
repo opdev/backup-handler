@@ -23,7 +23,7 @@ func CreateRestore(restore *backupv1.Restore) error {
 }
 
 func createRestore(ctx context.Context, db *sql.DB, restore *backupv1.Restore) error {
-	query := "INSERT INTO restores(created_at, id, name, namespace, backup_name) VALUES(?, ?, ?, ?, ?)"
+	query := "INSERT INTO restores(created_at, id, name, namespace, backup_name, storage_secret) VALUES(?, ?, ?, ?, ?, ?)"
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return err
@@ -36,6 +36,7 @@ func createRestore(ctx context.Context, db *sql.DB, restore *backupv1.Restore) e
 		restore.Destination.Name,
 		restore.Destination.Namespace,
 		restore.Backup,
+		restore.StorageSecret,
 	)
 	if err != nil {
 		return err

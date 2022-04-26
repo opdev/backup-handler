@@ -5,5 +5,6 @@ CREATE TABLE restores (
     id varchar(72),
     name varchar(72),
     namespace varchar(120),
-    backup_name varchar(250)
+    backup_name varchar(250),
+    storage_secret varchar(120)
 );
