@@ -33,3 +33,8 @@ func (r *Restore) SetUpdatedTime() {
 func (r *Restore) SetDeletedTime() {
 	r.Metadata.DeletedAt = utcTime()
 }
+
+type RestorePayload struct {
+	CustomResource string
+	Database       string
+}

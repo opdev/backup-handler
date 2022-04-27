@@ -8,14 +8,18 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/mattn/go-sqlite3 v1.14.11
+	github.com/walle/targz v0.0.0-20140417120357-57fe4206da5a
 	k8s.io/api v0.23.5
 	k8s.io/client-go v0.23.5
 	k8s.io/kubectl v0.23.5
 )
 
 require (
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/walle/targz v0.0.0-20140417120357-57fe4206da5a // indirect
+	github.com/lib/pq v1.10.4 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.17.0 // indirect
 )
 
 require (
@@ -37,8 +41,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20220403103023-749bd193bc2b // indirect
-	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
@@ -53,5 +57,5 @@ require (
 	k8s.io/utils v0.0.0-20211116205334-6203023598ed // indirect
 	sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
-	sigs.k8s.io/yaml v1.2.0 // indirect
+	sigs.k8s.io/yaml v1.3.0 // indirect
 )

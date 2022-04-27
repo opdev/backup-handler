@@ -1,9 +1,13 @@
 package command
 
 import (
+	"encoding/base64"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -27,10 +31,19 @@ func StartRestore(restore *backupv1.Restore) error {
 		return err
 	}
 
-	log.Printf("downloaded %d bytes of backup to %s.\n", size, asset)
+	log.Printf("%d bytes of %s downloaded.\n", size, path.Base(asset))
 	if err := targz.Extract(asset, "/tmp"); err != nil {
 		return err
 	}
+
+	payload, err := loadBackup(asset, restore.Destination)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// TODO: store the payload to a database awaiting
+	// api request for status
+	fmt.Println(payload)
 
 	return nil
 }
@@ -70,4 +83,36 @@ func downloadBackup(restore *backupv1.Restore, backupFile string) (int64, error)
 			),
 		),
 	})
+}
+
+// Load backup takes the backup directory as a parameter
+func loadBackup(backup string, destination backupv1.Destination) (*backupv1.RestorePayload, error) {
+	// Split the string at the periods
+	// and get the first item in the slice
+	dir := strings.Split(backup, ".")[0]
+
+	cr, err := readFileContents(path.Join(dir, "cr.json"))
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := readFileContents(path.Join(dir, "database.sql"))
+	if err != nil {
+		return nil, err
+	}
+
+	return &backupv1.RestorePayload{
+		CustomResource: base64.StdEncoding.EncodeToString(cr),
+		Database:       base64.StdEncoding.EncodeToString(db),
+	}, nil
+}
+
+func readFileContents(filename string) ([]byte, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	return ioutil.ReadAll(f)
 }
