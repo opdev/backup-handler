@@ -5,11 +5,11 @@ CREATE TABLE backups (
     id varchar(72),
     name varchar(72),
     namespace varchar(60),
-    is_running integer(1),
-    pod_name varchar(60),
-    container_name varchar(60),
+    state varchar(10),
+    pod varchar(60),
+    container varchar(60),
     command varchar(256),
-    upload_location varchar(256),
-    upload_secret varchar(128),
+    backup_location varchar(256),
+    storage_secret varchar(128),
     kube_resource varchar
 );

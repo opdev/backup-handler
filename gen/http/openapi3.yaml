@@ -1,0 +1,701 @@
+openapi: 3.0.3
+info:
+  title: Backup Handler Service
+  description: A service to handle backup for Pachyderm object
+  version: "1.0"
+servers:
+- url: http://localhost:8890
+paths:
+  /backups:
+    post:
+      tags:
+      - Backup Service
+      summary: create Backup Service
+      description: New backup request
+      operationId: Backup Service#create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestBody2'
+            example:
+              command: hostname -f
+              container: pachd
+              kubernetes_resource: '{"kind":"Pachyderm",...}'
+              name: pachdyderm-sample
+              namespace: testing
+              pod: pachd-65734594-sdg46
+              storage_secret: example-aws-secret
+      responses:
+        "202":
+          description: Accepted response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backupresult'
+              example:
+                backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+                command: hostname -f
+                container: pachd
+                created_at: "2019-10-12 07:20:50.52"
+                deleted_at: "2019-10-12 07:20:54.52"
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: '{"kind":"Pachyderm",...}'
+                name: pachdyderm-sample
+                namespace: testing
+                pod: pachd-65734594-sdg46
+                state: completed
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+    put:
+      tags:
+      - Backup Service
+      summary: update Backup Service
+      description: Update backup request
+      operationId: Backup Service#update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequestBody2'
+            example:
+              backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+              command: hostname -f
+              container: pachd
+              created_at: "2019-10-12 07:20:50.52"
+              deleted_at: "2019-10-12 07:20:54.52"
+              id: 00000-090000-0000000-000000
+              kubernetes_resource: '{"kind":"Pachyderm",...}'
+              name: pachdyderm-sample
+              namespace: testing
+              pod: pachd-65734594-sdg46
+              state: completed
+              storage_secret: example-aws-secret
+              updated_at: "2019-10-12 07:20:52.52"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backupresult'
+              example:
+                backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+                command: hostname -f
+                container: pachd
+                created_at: "2019-10-12 07:20:50.52"
+                deleted_at: "2019-10-12 07:20:54.52"
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: '{"kind":"Pachyderm",...}'
+                name: pachdyderm-sample
+                namespace: testing
+                pod: pachd-65734594-sdg46
+                state: queued
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+        "404":
+          description: 'backup_not_found: Error is returned when backup is not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupNotFound'
+  /backups/{id}:
+    delete:
+      tags:
+      - Backup Service
+      summary: delete Backup Service
+      description: Mark complete backup request
+      operationId: Backup Service#delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 00000-090000-0000000-000000
+        example: 00000-090000-0000000-000000
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backupresult'
+              example:
+                backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+                command: hostname -f
+                container: pachd
+                created_at: "2019-10-12 07:20:50.52"
+                deleted_at: "2019-10-12 07:20:54.52"
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: '{"kind":"Pachyderm",...}'
+                name: pachdyderm-sample
+                namespace: testing
+                pod: pachd-65734594-sdg46
+                state: completed
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+        "404":
+          description: 'backup_not_found: Error is returned when backup is not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupNotFound'
+    get:
+      tags:
+      - Backup Service
+      summary: get Backup Service
+      description: Obtain backup request
+      operationId: Backup Service#get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 00000-090000-0000000-000000
+        example: 00000-090000-0000000-000000
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Backupresult'
+              example:
+                backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+                command: hostname -f
+                container: pachd
+                created_at: "2019-10-12 07:20:50.52"
+                deleted_at: "2019-10-12 07:20:54.52"
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: '{"kind":"Pachyderm",...}'
+                name: pachdyderm-sample
+                namespace: testing
+                pod: pachd-65734594-sdg46
+                state: completed
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+        "404":
+          description: 'backup_not_found: Error is returned when backup is not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupNotFound'
+  /openapi3.json:
+    get:
+      tags:
+      - Restore Service
+      summary: Download ./gen/http/openapi3.json
+      operationId: Restore Service#/openapi3.json
+      responses:
+        "200":
+          description: File downloaded
+  /restores:
+    post:
+      tags:
+      - Restore Service
+      summary: create Restore Service
+      description: New restore request
+      operationId: Restore Service#create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestBody'
+            example:
+              backup_location: pachyderm-backup.tar.gz
+              destination_name: pachyderm-restore
+              destination_namespace: ai-namespace
+              name: pachdyderm-sample
+              namespace: testing
+              storage_secret: example-aws-secret
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoreresult'
+              example:
+                backup_location: pachyderm-backup.tar.gz
+                created_at: "2019-10-12 07:20:50.52"
+                database: database.sql
+                deleted_at: "2019-10-12 07:20:54.52"
+                destination_name: pachyderm-restore
+                destination_namespace: ai-namespace
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: pachyderm.yaml
+                name: pachdyderm-sample
+                namespace: testing
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+        "404":
+          description: 'backup_not_found: Error is returned when backup location is
+            not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupNotFound'
+    put:
+      tags:
+      - Restore Service
+      summary: update Restore Service
+      description: Update restore request
+      operationId: Restore Service#update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequestBody'
+            example:
+              backup_location: pachyderm-backup.tar.gz
+              created_at: "2019-10-12 07:20:50.52"
+              database: database.sql
+              deleted_at: "2019-10-12 07:20:54.52"
+              destination_name: pachyderm-restore
+              destination_namespace: ai-namespace
+              id: 00000-090000-0000000-000000
+              kubernetes_resource: pachyderm.yaml
+              name: pachdyderm-sample
+              namespace: testing
+              storage_secret: example-aws-secret
+              updated_at: "2019-10-12 07:20:52.52"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoreresult'
+              example:
+                backup_location: pachyderm-backup.tar.gz
+                created_at: "2019-10-12 07:20:50.52"
+                database: database.sql
+                deleted_at: "2019-10-12 07:20:54.52"
+                destination_name: pachyderm-restore
+                destination_namespace: ai-namespace
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: pachyderm.yaml
+                name: pachdyderm-sample
+                namespace: testing
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+  /restores/{id}:
+    delete:
+      tags:
+      - Restore Service
+      summary: delete Restore Service
+      description: Mark complete restore request
+      operationId: Restore Service#delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 00000-090000-0000000-000000
+        example: 00000-090000-0000000-000000
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoreresult'
+              example:
+                backup_location: pachyderm-backup.tar.gz
+                created_at: "2019-10-12 07:20:50.52"
+                database: database.sql
+                deleted_at: "2019-10-12 07:20:54.52"
+                destination_name: pachyderm-restore
+                destination_namespace: ai-namespace
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: pachyderm.yaml
+                name: pachdyderm-sample
+                namespace: testing
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+    get:
+      tags:
+      - Restore Service
+      summary: get Restore Service
+      description: Get restore request
+      operationId: Restore Service#get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 00000-090000-0000000-000000
+        example: 00000-090000-0000000-000000
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoreresult'
+              example:
+                backup_location: pachyderm-backup.tar.gz
+                created_at: "2019-10-12 07:20:50.52"
+                database: database.sql
+                deleted_at: "2019-10-12 07:20:54.52"
+                destination_name: pachyderm-restore
+                destination_namespace: ai-namespace
+                id: 00000-090000-0000000-000000
+                kubernetes_resource: pachyderm.yaml
+                name: pachdyderm-sample
+                namespace: testing
+                storage_secret: example-aws-secret
+                updated_at: "2019-10-12 07:20:52.52"
+components:
+  schemas:
+    BackupNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          description: backup resource not found
+          example: Numquam ullam ut.
+      description: backup not found
+      example:
+        message: Ipsum quia officia aut aliquam vero laborum.
+      required:
+      - message
+    Backupresult:
+      type: object
+      properties:
+        backup_location:
+          type: string
+          example: http://minio.local/backups/pachyderm-backup.tar.gz
+        command:
+          type: string
+          description: base64 encoded command to run in pod
+          example: hostname -f
+        container:
+          type: string
+          description: Name of container in pod
+          example: pachd
+        created_at:
+          type: string
+          example: "2019-10-12 07:20:50.52"
+        deleted_at:
+          type: string
+          example: "2019-10-12 07:20:54.52"
+        id:
+          type: string
+          example: 00000-090000-0000000-000000
+        kubernetes_resource:
+          type: string
+          description: base64 encoded json representation of object
+          example: '{"kind":"Pachyderm",...}'
+        name:
+          type: string
+          description: Name of pachyderm instance backed up
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace of resource backed up
+          example: testing
+        pod:
+          type: string
+          description: Name of target pod
+          example: pachd-65734594-sdg46
+        state:
+          type: string
+          description: Current state of the job
+          example: completed
+          enum:
+          - queued
+          - running
+          - completed
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+        updated_at:
+          type: string
+          example: "2019-10-12 07:20:52.52"
+      example:
+        backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+        command: hostname -f
+        container: pachd
+        created_at: "2019-10-12 07:20:50.52"
+        deleted_at: "2019-10-12 07:20:54.52"
+        id: 00000-090000-0000000-000000
+        kubernetes_resource: '{"kind":"Pachyderm",...}'
+        name: pachdyderm-sample
+        namespace: testing
+        pod: pachd-65734594-sdg46
+        state: queued
+        storage_secret: example-aws-secret
+        updated_at: "2019-10-12 07:20:52.52"
+    CreateRequestBody:
+      type: object
+      properties:
+        backup_location:
+          type: string
+          example: pachyderm-backup.tar.gz
+        destination_name:
+          type: string
+          description: name of pachyderm instance to restore to
+          example: pachyderm-restore
+        destination_namespace:
+          type: string
+          description: namespace to restore pachyderm to
+          example: ai-namespace
+        name:
+          type: string
+          description: Name of pachyderm instance to restore to
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace to restore to
+          example: testing
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+      example:
+        backup_location: pachyderm-backup.tar.gz
+        destination_name: pachyderm-restore
+        destination_namespace: ai-namespace
+        name: pachdyderm-sample
+        namespace: testing
+        storage_secret: example-aws-secret
+    CreateRequestBody2:
+      type: object
+      properties:
+        command:
+          type: string
+          description: base64 encoded command to run in pod
+          example: hostname -f
+        container:
+          type: string
+          description: Name of container in pod
+          example: pachd
+        kubernetes_resource:
+          type: string
+          description: base64 encoded json representation of object
+          example: '{"kind":"Pachyderm",...}'
+        name:
+          type: string
+          description: Name of pachyderm instance backed up
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace of resource backed up
+          example: testing
+        pod:
+          type: string
+          description: Name of target pod
+          example: pachd-65734594-sdg46
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+      example:
+        command: hostname -f
+        container: pachd
+        kubernetes_resource: '{"kind":"Pachyderm",...}'
+        name: pachdyderm-sample
+        namespace: testing
+        pod: pachd-65734594-sdg46
+        storage_secret: example-aws-secret
+    Restoreresult:
+      type: object
+      properties:
+        backup_location:
+          type: string
+          example: pachyderm-backup.tar.gz
+        created_at:
+          type: string
+          example: "2019-10-12 07:20:50.52"
+        database:
+          type: string
+          description: base64 encoded database dump
+          example: database.sql
+        deleted_at:
+          type: string
+          example: "2019-10-12 07:20:54.52"
+        destination_name:
+          type: string
+          description: name of pachyderm instance to restore to
+          example: pachyderm-restore
+        destination_namespace:
+          type: string
+          description: namespace to restore pachyderm to
+          example: ai-namespace
+        id:
+          type: string
+          example: 00000-090000-0000000-000000
+        kubernetes_resource:
+          type: string
+          description: base64 encoded kubernetes object
+          example: pachyderm.yaml
+        name:
+          type: string
+          description: Name of pachyderm instance to restore to
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace to restore to
+          example: testing
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+        updated_at:
+          type: string
+          example: "2019-10-12 07:20:52.52"
+      example:
+        backup_location: pachyderm-backup.tar.gz
+        created_at: "2019-10-12 07:20:50.52"
+        database: database.sql
+        deleted_at: "2019-10-12 07:20:54.52"
+        destination_name: pachyderm-restore
+        destination_namespace: ai-namespace
+        id: 00000-090000-0000000-000000
+        kubernetes_resource: pachyderm.yaml
+        name: pachdyderm-sample
+        namespace: testing
+        storage_secret: example-aws-secret
+        updated_at: "2019-10-12 07:20:52.52"
+    UpdateRequestBody:
+      type: object
+      properties:
+        backup_location:
+          type: string
+          example: pachyderm-backup.tar.gz
+        created_at:
+          type: string
+          example: "2019-10-12 07:20:50.52"
+        database:
+          type: string
+          description: base64 encoded database dump
+          example: database.sql
+        deleted_at:
+          type: string
+          example: "2019-10-12 07:20:54.52"
+        destination_name:
+          type: string
+          description: name of pachyderm instance to restore to
+          example: pachyderm-restore
+        destination_namespace:
+          type: string
+          description: namespace to restore pachyderm to
+          example: ai-namespace
+        id:
+          type: string
+          example: 00000-090000-0000000-000000
+        kubernetes_resource:
+          type: string
+          description: base64 encoded kubernetes object
+          example: pachyderm.yaml
+        name:
+          type: string
+          description: Name of pachyderm instance to restore to
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace to restore to
+          example: testing
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+        updated_at:
+          type: string
+          example: "2019-10-12 07:20:52.52"
+      example:
+        backup_location: pachyderm-backup.tar.gz
+        created_at: "2019-10-12 07:20:50.52"
+        database: database.sql
+        deleted_at: "2019-10-12 07:20:54.52"
+        destination_name: pachyderm-restore
+        destination_namespace: ai-namespace
+        id: 00000-090000-0000000-000000
+        kubernetes_resource: pachyderm.yaml
+        name: pachdyderm-sample
+        namespace: testing
+        storage_secret: example-aws-secret
+        updated_at: "2019-10-12 07:20:52.52"
+    UpdateRequestBody2:
+      type: object
+      properties:
+        backup_location:
+          type: string
+          example: http://minio.local/backups/pachyderm-backup.tar.gz
+        command:
+          type: string
+          description: base64 encoded command to run in pod
+          example: hostname -f
+        container:
+          type: string
+          description: Name of container in pod
+          example: pachd
+        created_at:
+          type: string
+          example: "2019-10-12 07:20:50.52"
+        deleted_at:
+          type: string
+          example: "2019-10-12 07:20:54.52"
+        id:
+          type: string
+          example: 00000-090000-0000000-000000
+        kubernetes_resource:
+          type: string
+          description: base64 encoded json representation of object
+          example: '{"kind":"Pachyderm",...}'
+        name:
+          type: string
+          description: Name of pachyderm instance backed up
+          example: pachdyderm-sample
+        namespace:
+          type: string
+          description: Namespace of resource backed up
+          example: testing
+        pod:
+          type: string
+          description: Name of target pod
+          example: pachd-65734594-sdg46
+        state:
+          type: string
+          description: Current state of the job
+          example: completed
+          enum:
+          - queued
+          - running
+          - completed
+        storage_secret:
+          type: string
+          description: Kubernetes secret containing S3 storage credentials
+          example: example-aws-secret
+        updated_at:
+          type: string
+          example: "2019-10-12 07:20:52.52"
+      example:
+        backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
+        command: hostname -f
+        container: pachd
+        created_at: "2019-10-12 07:20:50.52"
+        deleted_at: "2019-10-12 07:20:54.52"
+        id: 00000-090000-0000000-000000
+        kubernetes_resource: '{"kind":"Pachyderm",...}'
+        name: pachdyderm-sample
+        namespace: testing
+        pod: pachd-65734594-sdg46
+        state: completed
+        storage_secret: example-aws-secret
+        updated_at: "2019-10-12 07:20:52.52"
+tags:
+- name: Restore Service
+  description: Service to handle restore requests
+- name: Backup Service
+  description: Service to handle backup requests
