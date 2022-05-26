@@ -37,7 +37,7 @@ func main() {
 		logger *log.Logger
 	)
 	{
-		logger = log.New(os.Stderr, "[backuphandler] ", log.Ltime)
+		logger = log.New(os.Stderr, "[backuphandler] ", log.Ldate|log.Ltime)
 	}
 
 	// Initialize the database schema

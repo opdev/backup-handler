@@ -25,27 +25,29 @@ import (
 
 // RunBackup executs a backup job
 func RunBackup(backup *backupservice.Backupresult) error {
-	results, err := execBackup(backup)
+	logger := log.New(os.Stderr, "[backuprunner] ", log.Ldate|log.Ltime)
+	logger.Println("Starting backup..")
+	results, err := execBackup(logger, backup)
 	if err != nil {
 		return err
 	}
 
-	if err := writeBackup(backup, results.Output()); err != nil {
+	if err := writeBackup(logger, backup, results.Output()); err != nil {
 		return err
 	}
 
 	if stderr := results.Error(); stderr != "" {
-		log.Printf("stderr: %s\n", stderr)
+		logger.Printf("error executing backup; %s\n", stderr)
 	}
 
 	if err := setBackupResults(backup); err != nil {
 		return err
 	}
 
-	return markBackupCompleted(backup)
+	return markBackupCompleted(logger, backup)
 }
 
-func writeBackup(backup *backupservice.Backupresult, output string) error {
+func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output string) error {
 	var t time.Time = time.Now().UTC()
 	timestamp := t.Format("200601021504")
 	backupDir := path.Join(
@@ -95,6 +97,7 @@ func writeBackup(backup *backupservice.Backupresult, output string) error {
 	}
 	backup.BackupLocation = &response.Location
 
+	logger.Printf("cleaning up backup at %s.\n", backupTarball)
 	if err = os.Remove(backupTarball); err != nil {
 		return err
 	}
@@ -137,7 +140,7 @@ func setBackupResults(backup *backupservice.Backupresult) error {
 	return nil
 }
 
-func markBackupCompleted(backup *backupservice.Backupresult) error {
+func markBackupCompleted(logger *log.Logger, backup *backupservice.Backupresult) error {
 	url := fmt.Sprintf("http://localhost:8890/backups/%s", *backup.ID)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
@@ -160,18 +163,19 @@ func markBackupCompleted(backup *backupservice.Backupresult) error {
 		return err
 	}
 
+	logger.Println("backup marked completed!")
+
 	return nil
 }
 
-func execBackup(backup *backupservice.Backupresult) (*ExecResponse, error) {
-	command, err := base64.StdEncoding.DecodeString(*backup.Command)
+func execBackup(logger *log.Logger, backup *backupservice.Backupresult) (*ExecResponse, error) {
+	cmdBuilder := &Builder{
+		cmd: *backup.Command,
+	}
+	cmd, err := cmdBuilder.Unmarshal()
 	if err != nil {
 		return nil, err
 	}
-	cmd := strings.Split(
-		string(command),
-		".",
-	)
 
 	return ExecuteCommand(
 		ExecOptions{

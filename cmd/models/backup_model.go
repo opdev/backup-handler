@@ -111,6 +111,11 @@ func UpdateBackup(backup *backupservice.Backupresult) (int64, error) {
 		return 0, err
 	}
 
+	// mark
+	if backup.DeletedAt != nil {
+		return deleteBackup(context.Background(), db, backup)
+	}
+
 	return updateBackup(context.Background(), db, backup)
 }
 
@@ -144,6 +149,7 @@ command = ?, backup_location = ?, storage_secret = ?, kube_resource = ? WHERE id
 	return results.RowsAffected()
 }
 
+// DeleteBackup marks a backup request deleted on completion or cancellation
 func DeleteBackup(backup *backupservice.Backupresult) (int64, error) {
 	db, err := connect()
 	if err != nil {
@@ -158,7 +164,7 @@ func DeleteBackup(backup *backupservice.Backupresult) (int64, error) {
 }
 
 func deleteBackup(ctx context.Context, db *sql.DB, backup *backupservice.Backupresult) (int64, error) {
-	query := `UPDATE backups SET deleted_at = ? WHERE id = ?`
+	query := `UPDATE backups SET deleted_at = ?,  state = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -168,6 +174,7 @@ func deleteBackup(ctx context.Context, db *sql.DB, backup *backupservice.Backupr
 
 	results, err := stmt.ExecContext(ctx,
 		backup.DeletedAt,
+		backup.State,
 		backup.ID,
 	)
 	if err != nil {

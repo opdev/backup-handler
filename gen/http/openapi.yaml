@@ -249,6 +249,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: URL of the uploaded backup tarball
         example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
@@ -332,6 +333,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: URL of the uploaded backup tarball
         example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
@@ -415,6 +417,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: URL of the uploaded backup tarball
         example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
@@ -498,6 +501,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: URL of the uploaded backup tarball
         example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
@@ -567,6 +571,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: URL of the uploaded backup tarball
         example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
@@ -650,6 +655,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       destination_name:
         type: string
@@ -684,6 +690,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       created_at:
         type: string
@@ -745,6 +752,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       created_at:
         type: string
@@ -806,6 +814,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       created_at:
         type: string
@@ -867,6 +876,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       created_at:
         type: string
@@ -927,6 +937,7 @@ definitions:
     properties:
       backup_location:
         type: string
+        description: Key of backup tarball
         example: pachyderm-backup.tar.gz
       created_at:
         type: string

@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.11
 	github.com/walle/targz v0.0.0-20140417120357-57fe4206da5a
-	goa.design/goa/v3 v3.7.2
+	goa.design/goa/v3 v3.7.3
 	k8s.io/api v0.23.5
 	k8s.io/client-go v0.23.5
 	k8s.io/kubectl v0.23.5

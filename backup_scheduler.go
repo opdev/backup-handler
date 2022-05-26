@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/opdev/backup-handler/cmd/command"
+	"github.com/opdev/backup-handler/cmd/models"
 	backupservice "github.com/opdev/backup-handler/gen/backup_service"
 )
 
@@ -31,10 +32,26 @@ func (r *BackupQueue) Pop() *backupservice.Backupresult {
 func (r *BackupQueue) execBackup(logger *log.Logger) {
 	for len(r.backups) > 0 {
 		target := r.Pop()
+		state := "running"
+		target.UpdatedAt = utcTime()
+		target.State = &state
+		// mark backup as running
+		if _, err := models.UpdateBackup(target); err != nil {
+			logger.Printf("error updating backup state")
+		}
+
 		defer logger.Printf("backup %s has completed.\n", *target.ID)
 		// do the work
 		if err := command.RunBackup(target); err != nil {
 			logger.Printf("error running backup %s. %+v\n", *target.ID, err)
+		}
+
+		// mark the backup job completed
+		state = "completed"
+		target.DeletedAt = utcTime()
+		target.State = &state
+		if _, err := models.UpdateBackup(target); err != nil {
+			logger.Printf("error updating backup state")
 		}
 	}
 }
