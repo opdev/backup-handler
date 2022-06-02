@@ -283,13 +283,13 @@ Update backup request
 
 Example:
     %[1]s backup-service update --body '{
-      "backup_location": "http://minio.local/backups/pachyderm-backup.tar.gz",
       "command": "hostname -f",
       "container": "pachd",
       "created_at": "2019-10-12 07:20:50.52",
       "deleted_at": "2019-10-12 07:20:54.52",
       "id": "00000-090000-0000000-000000",
       "kubernetes_resource": "{\"kind\":\"Pachyderm\",...}",
+      "location": "http://minio.local/backups/pachyderm-backup.tar.gz",
       "name": "pachdyderm-sample",
       "namespace": "testing",
       "pod": "pachd-65734594-sdg46",

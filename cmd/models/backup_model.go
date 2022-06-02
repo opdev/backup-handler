@@ -94,7 +94,7 @@ command, backup_location, storage_secret, kube_resource FROM backups WHERE id = 
 	// Bug Fix: use location place holder since backup.UploadLocation could be NULL
 	// This is needed since the database/sql package can not handle NULL values
 	if location.Valid {
-		backup.BackupLocation = &location.String
+		backup.Location = &location.String
 	}
 
 	return nil
@@ -137,7 +137,7 @@ command = ?, backup_location = ?, storage_secret = ?, kube_resource = ? WHERE id
 		backup.Pod,
 		backup.Container,
 		backup.Command,
-		backup.BackupLocation,
+		backup.Location,
 		backup.StorageSecret,
 		backup.KubernetesResource,
 		backup.ID,

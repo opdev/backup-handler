@@ -95,7 +95,7 @@ func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output 
 	if err != nil {
 		return err
 	}
-	backup.BackupLocation = &response.Location
+	backup.Location = &response.Location
 
 	logger.Printf("cleaning up backup at %s.\n", backupTarball)
 	if err = os.Remove(backupTarball); err != nil {

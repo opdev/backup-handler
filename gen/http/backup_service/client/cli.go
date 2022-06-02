@@ -59,7 +59,7 @@ func BuildUpdatePayload(backupServiceUpdateBody string) (*backupservice.Backupre
 	{
 		err = json.Unmarshal([]byte(backupServiceUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"backup_location\": \"http://minio.local/backups/pachyderm-backup.tar.gz\",\n      \"command\": \"hostname -f\",\n      \"container\": \"pachd\",\n      \"created_at\": \"2019-10-12 07:20:50.52\",\n      \"deleted_at\": \"2019-10-12 07:20:54.52\",\n      \"id\": \"00000-090000-0000000-000000\",\n      \"kubernetes_resource\": \"{\\\"kind\\\":\\\"Pachyderm\\\",...}\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"pod\": \"pachd-65734594-sdg46\",\n      \"state\": \"completed\",\n      \"storage_secret\": \"example-aws-secret\",\n      \"updated_at\": \"2019-10-12 07:20:52.52\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"command\": \"hostname -f\",\n      \"container\": \"pachd\",\n      \"created_at\": \"2019-10-12 07:20:50.52\",\n      \"deleted_at\": \"2019-10-12 07:20:54.52\",\n      \"id\": \"00000-090000-0000000-000000\",\n      \"kubernetes_resource\": \"{\\\"kind\\\":\\\"Pachyderm\\\",...}\",\n      \"location\": \"http://minio.local/backups/pachyderm-backup.tar.gz\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"pod\": \"pachd-65734594-sdg46\",\n      \"state\": \"completed\",\n      \"storage_secret\": \"example-aws-secret\",\n      \"updated_at\": \"2019-10-12 07:20:52.52\"\n   }'")
 		}
 	}
 	v := &backupservice.Backupresult{
@@ -75,7 +75,7 @@ func BuildUpdatePayload(backupServiceUpdateBody string) (*backupservice.Backupre
 		Command:            body.Command,
 		StorageSecret:      body.StorageSecret,
 		KubernetesResource: body.KubernetesResource,
-		BackupLocation:     body.BackupLocation,
+		Location:           body.Location,
 	}
 
 	return v, nil

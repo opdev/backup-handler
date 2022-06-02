@@ -247,10 +247,6 @@ definitions:
     title: 'Mediatype identifier: backupresult; view=default'
     type: object
     properties:
-      backup_location:
-        type: string
-        description: URL of the uploaded backup tarball
-        example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
         description: base64 encoded command to run in pod
@@ -272,6 +268,10 @@ definitions:
         type: string
         description: base64 encoded json representation of object
         example: '{"kind":"Pachyderm",...}'
+      location:
+        type: string
+        description: URL of the uploaded backup tarball
+        example: http://minio.local/backups/pachyderm-backup.tar.gz
       name:
         type: string
         description: Name of pachyderm instance backed up
@@ -301,13 +301,13 @@ definitions:
         example: "2019-10-12 07:20:52.52"
     description: CreateResponseBody result type (default view)
     example:
-      backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
       command: hostname -f
       container: pachd
       created_at: "2019-10-12 07:20:50.52"
       deleted_at: "2019-10-12 07:20:54.52"
       id: 00000-090000-0000000-000000
       kubernetes_resource: '{"kind":"Pachyderm",...}'
+      location: http://minio.local/backups/pachyderm-backup.tar.gz
       name: pachdyderm-sample
       namespace: testing
       pod: pachd-65734594-sdg46
@@ -331,10 +331,6 @@ definitions:
     title: 'Mediatype identifier: backupresult; view=default'
     type: object
     properties:
-      backup_location:
-        type: string
-        description: URL of the uploaded backup tarball
-        example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
         description: base64 encoded command to run in pod
@@ -356,6 +352,10 @@ definitions:
         type: string
         description: base64 encoded json representation of object
         example: '{"kind":"Pachyderm",...}'
+      location:
+        type: string
+        description: URL of the uploaded backup tarball
+        example: http://minio.local/backups/pachyderm-backup.tar.gz
       name:
         type: string
         description: Name of pachyderm instance backed up
@@ -385,13 +385,13 @@ definitions:
         example: "2019-10-12 07:20:52.52"
     description: DeleteResponseBody result type (default view)
     example:
-      backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
       command: hostname -f
       container: pachd
       created_at: "2019-10-12 07:20:50.52"
       deleted_at: "2019-10-12 07:20:54.52"
       id: 00000-090000-0000000-000000
       kubernetes_resource: '{"kind":"Pachyderm",...}'
+      location: http://minio.local/backups/pachyderm-backup.tar.gz
       name: pachdyderm-sample
       namespace: testing
       pod: pachd-65734594-sdg46
@@ -415,10 +415,6 @@ definitions:
     title: 'Mediatype identifier: backupresult; view=default'
     type: object
     properties:
-      backup_location:
-        type: string
-        description: URL of the uploaded backup tarball
-        example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
         description: base64 encoded command to run in pod
@@ -440,6 +436,10 @@ definitions:
         type: string
         description: base64 encoded json representation of object
         example: '{"kind":"Pachyderm",...}'
+      location:
+        type: string
+        description: URL of the uploaded backup tarball
+        example: http://minio.local/backups/pachyderm-backup.tar.gz
       name:
         type: string
         description: Name of pachyderm instance backed up
@@ -469,13 +469,13 @@ definitions:
         example: "2019-10-12 07:20:52.52"
     description: GetResponseBody result type (default view)
     example:
-      backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
       command: hostname -f
       container: pachd
       created_at: "2019-10-12 07:20:50.52"
       deleted_at: "2019-10-12 07:20:54.52"
       id: 00000-090000-0000000-000000
       kubernetes_resource: '{"kind":"Pachyderm",...}'
+      location: http://minio.local/backups/pachyderm-backup.tar.gz
       name: pachdyderm-sample
       namespace: testing
       pod: pachd-65734594-sdg46
@@ -499,10 +499,6 @@ definitions:
     title: BackupServiceUpdateRequestBody
     type: object
     properties:
-      backup_location:
-        type: string
-        description: URL of the uploaded backup tarball
-        example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
         description: base64 encoded command to run in pod
@@ -524,6 +520,10 @@ definitions:
         type: string
         description: base64 encoded json representation of object
         example: '{"kind":"Pachyderm",...}'
+      location:
+        type: string
+        description: URL of the uploaded backup tarball
+        example: http://minio.local/backups/pachyderm-backup.tar.gz
       name:
         type: string
         description: Name of pachyderm instance backed up
@@ -552,13 +552,13 @@ definitions:
         type: string
         example: "2019-10-12 07:20:52.52"
     example:
-      backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
       command: hostname -f
       container: pachd
       created_at: "2019-10-12 07:20:50.52"
       deleted_at: "2019-10-12 07:20:54.52"
       id: 00000-090000-0000000-000000
       kubernetes_resource: '{"kind":"Pachyderm",...}'
+      location: http://minio.local/backups/pachyderm-backup.tar.gz
       name: pachdyderm-sample
       namespace: testing
       pod: pachd-65734594-sdg46
@@ -569,10 +569,6 @@ definitions:
     title: 'Mediatype identifier: backupresult; view=default'
     type: object
     properties:
-      backup_location:
-        type: string
-        description: URL of the uploaded backup tarball
-        example: http://minio.local/backups/pachyderm-backup.tar.gz
       command:
         type: string
         description: base64 encoded command to run in pod
@@ -594,6 +590,10 @@ definitions:
         type: string
         description: base64 encoded json representation of object
         example: '{"kind":"Pachyderm",...}'
+      location:
+        type: string
+        description: URL of the uploaded backup tarball
+        example: http://minio.local/backups/pachyderm-backup.tar.gz
       name:
         type: string
         description: Name of pachyderm instance backed up
@@ -623,13 +623,13 @@ definitions:
         example: "2019-10-12 07:20:52.52"
     description: UpdateResponseBody result type (default view)
     example:
-      backup_location: http://minio.local/backups/pachyderm-backup.tar.gz
       command: hostname -f
       container: pachd
       created_at: "2019-10-12 07:20:50.52"
       deleted_at: "2019-10-12 07:20:54.52"
       id: 00000-090000-0000000-000000
       kubernetes_resource: '{"kind":"Pachyderm",...}'
+      location: http://minio.local/backups/pachyderm-backup.tar.gz
       name: pachdyderm-sample
       namespace: testing
       pod: pachd-65734594-sdg46

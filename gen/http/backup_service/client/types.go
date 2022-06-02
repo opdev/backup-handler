@@ -56,7 +56,7 @@ type UpdateRequestBody struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string `form:"kubernetes_resource,omitempty" json:"kubernetes_resource,omitempty" xml:"kubernetes_resource,omitempty"`
 	// URL of the uploaded backup tarball
-	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
+	Location *string `form:"location,omitempty" json:"location,omitempty" xml:"location,omitempty"`
 }
 
 // CreateResponseBody is the type of the "Backup Service" service "create"
@@ -83,7 +83,7 @@ type CreateResponseBody struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string `form:"kubernetes_resource,omitempty" json:"kubernetes_resource,omitempty" xml:"kubernetes_resource,omitempty"`
 	// URL of the uploaded backup tarball
-	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
+	Location *string `form:"location,omitempty" json:"location,omitempty" xml:"location,omitempty"`
 }
 
 // GetResponseBody is the type of the "Backup Service" service "get" endpoint
@@ -110,7 +110,7 @@ type GetResponseBody struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string `form:"kubernetes_resource,omitempty" json:"kubernetes_resource,omitempty" xml:"kubernetes_resource,omitempty"`
 	// URL of the uploaded backup tarball
-	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
+	Location *string `form:"location,omitempty" json:"location,omitempty" xml:"location,omitempty"`
 }
 
 // UpdateResponseBody is the type of the "Backup Service" service "update"
@@ -137,7 +137,7 @@ type UpdateResponseBody struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string `form:"kubernetes_resource,omitempty" json:"kubernetes_resource,omitempty" xml:"kubernetes_resource,omitempty"`
 	// URL of the uploaded backup tarball
-	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
+	Location *string `form:"location,omitempty" json:"location,omitempty" xml:"location,omitempty"`
 }
 
 // DeleteResponseBody is the type of the "Backup Service" service "delete"
@@ -164,7 +164,7 @@ type DeleteResponseBody struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string `form:"kubernetes_resource,omitempty" json:"kubernetes_resource,omitempty" xml:"kubernetes_resource,omitempty"`
 	// URL of the uploaded backup tarball
-	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
+	Location *string `form:"location,omitempty" json:"location,omitempty" xml:"location,omitempty"`
 }
 
 // GetBackupNotFoundResponseBody is the type of the "Backup Service" service
@@ -219,7 +219,7 @@ func NewUpdateRequestBody(p *backupservice.Backupresult) *UpdateRequestBody {
 		Command:            p.Command,
 		StorageSecret:      p.StorageSecret,
 		KubernetesResource: p.KubernetesResource,
-		BackupLocation:     p.BackupLocation,
+		Location:           p.Location,
 	}
 	return body
 }
@@ -240,7 +240,7 @@ func NewCreateBackupresultAccepted(body *CreateResponseBody) *backupserviceviews
 		Command:            body.Command,
 		StorageSecret:      body.StorageSecret,
 		KubernetesResource: body.KubernetesResource,
-		BackupLocation:     body.BackupLocation,
+		Location:           body.Location,
 	}
 
 	return v
@@ -262,7 +262,7 @@ func NewGetBackupresultOK(body *GetResponseBody) *backupserviceviews.Backupresul
 		Command:            body.Command,
 		StorageSecret:      body.StorageSecret,
 		KubernetesResource: body.KubernetesResource,
-		BackupLocation:     body.BackupLocation,
+		Location:           body.Location,
 	}
 
 	return v
@@ -294,7 +294,7 @@ func NewUpdateBackupresultOK(body *UpdateResponseBody) *backupserviceviews.Backu
 		Command:            body.Command,
 		StorageSecret:      body.StorageSecret,
 		KubernetesResource: body.KubernetesResource,
-		BackupLocation:     body.BackupLocation,
+		Location:           body.Location,
 	}
 
 	return v
@@ -326,7 +326,7 @@ func NewDeleteBackupresultOK(body *DeleteResponseBody) *backupserviceviews.Backu
 		Command:            body.Command,
 		StorageSecret:      body.StorageSecret,
 		KubernetesResource: body.KubernetesResource,
-		BackupLocation:     body.BackupLocation,
+		Location:           body.Location,
 	}
 
 	return v

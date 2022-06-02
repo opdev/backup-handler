@@ -84,7 +84,7 @@ var BackupResult = ResultType("BackupResult", func() {
 		Attribute("command")
 		Attribute("storage_secret")
 		Attribute("kubernetes_resource")
-		Attribute("backup_location", String, func() {
+		Attribute("location", String, func() {
 			Description("URL of the uploaded backup tarball")
 			Example("http://minio.local/backups/pachyderm-backup.tar.gz")
 		})

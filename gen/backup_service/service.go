@@ -82,7 +82,7 @@ type Backupresult struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string
 	// URL of the uploaded backup tarball
-	BackupLocation *string
+	Location *string
 }
 
 // DeletePayload is the payload type of the Backup Service service delete
@@ -135,7 +135,7 @@ func newBackupresult(vres *backupserviceviews.BackupresultView) *Backupresult {
 		Command:            vres.Command,
 		StorageSecret:      vres.StorageSecret,
 		KubernetesResource: vres.KubernetesResource,
-		BackupLocation:     vres.BackupLocation,
+		Location:           vres.Location,
 	}
 	return res
 }
@@ -156,7 +156,7 @@ func newBackupresultView(res *Backupresult) *backupserviceviews.BackupresultView
 		Command:            res.Command,
 		StorageSecret:      res.StorageSecret,
 		KubernetesResource: res.KubernetesResource,
-		BackupLocation:     res.BackupLocation,
+		Location:           res.Location,
 	}
 	return vres
 }

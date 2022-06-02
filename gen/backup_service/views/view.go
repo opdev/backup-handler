@@ -42,7 +42,7 @@ type BackupresultView struct {
 	// base64 encoded json representation of object
 	KubernetesResource *string
 	// URL of the uploaded backup tarball
-	BackupLocation *string
+	Location *string
 }
 
 var (
@@ -62,7 +62,7 @@ var (
 			"command",
 			"storage_secret",
 			"kubernetes_resource",
-			"backup_location",
+			"location",
 		},
 	}
 )
