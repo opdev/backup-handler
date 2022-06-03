@@ -19,6 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	backupservice "github.com/opdev/backup-handler/gen/backup_service"
+	backupclient "github.com/opdev/backup-handler/gen/http/backup_service/client"
 	"github.com/walle/targz"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -97,7 +98,6 @@ func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output 
 	}
 	backup.Location = &response.Location
 
-	logger.Printf("cleaning up backup at %s.\n", backupTarball)
 	if err = os.Remove(backupTarball); err != nil {
 		return err
 	}
@@ -110,7 +110,8 @@ func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output 
 }
 
 func setBackupResults(backup *backupservice.Backupresult) error {
-	payload, err := json.Marshal(backup)
+	conversion := backupclient.UpdateResponseBody(*backup)
+	payload, err := json.Marshal(&conversion)
 	if err != nil {
 		return err
 	}

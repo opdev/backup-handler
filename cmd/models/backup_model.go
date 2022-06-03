@@ -8,6 +8,7 @@ import (
 	backupservice "github.com/opdev/backup-handler/gen/backup_service"
 )
 
+// CreateBackup adds backup request to database
 func CreateBackup(backup *backupservice.Backupresult) error {
 	db, err := connect()
 	if err != nil {
@@ -164,7 +165,7 @@ func DeleteBackup(backup *backupservice.Backupresult) (int64, error) {
 }
 
 func deleteBackup(ctx context.Context, db *sql.DB, backup *backupservice.Backupresult) (int64, error) {
-	query := `UPDATE backups SET deleted_at = ?,  state = ? WHERE id = ?`
+	query := `UPDATE backups SET deleted_at = ?,  state = ?, backup_location = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -175,6 +176,7 @@ func deleteBackup(ctx context.Context, db *sql.DB, backup *backupservice.Backupr
 	results, err := stmt.ExecContext(ctx,
 		backup.DeletedAt,
 		backup.State,
+		backup.Location,
 		backup.ID,
 	)
 	if err != nil {
