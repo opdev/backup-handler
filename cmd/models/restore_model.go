@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	restoreservice "github.com/opdev/backup-handler/gen/restore_service"
 )
@@ -65,7 +66,7 @@ func GetRestore(restore *restoreservice.Restoreresult) error {
 }
 
 func getRestore(ctx context.Context, db *sql.DB, restore *restoreservice.Restoreresult) error {
-	query := "SELECT created_at, id, name, namespace, backup_name FROM restores WHERE id = ?"
+	query := "SELECT created_at, updated_at, deleted_at, id, name, namespace, backup_name, storage_secret FROM restores WHERE id = ?"
 	row := db.QueryRowContext(ctx, query, restore.ID)
 
 	if err := row.Scan(
@@ -76,7 +77,9 @@ func getRestore(ctx context.Context, db *sql.DB, restore *restoreservice.Restore
 		&restore.DestinationName,
 		&restore.DestinationNamespace,
 		&restore.BackupLocation,
+		&restore.StorageSecret,
 	); err != nil {
+		log.Println("error reading responses")
 		return err
 	}
 
