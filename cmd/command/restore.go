@@ -2,7 +2,6 @@ package command
 
 import (
 	"encoding/base64"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,7 +42,7 @@ func StartRestore(restore *restoreservice.Restoreresult) error {
 
 	// TODO: store the payload to a database awaiting
 	// api request for status
-	fmt.Printf("cr => %s\ndb => %s\n", *restore.KubernetesResource, *restore.Database)
+	log.Printf("cr => %s\ndb => %s\n", *restore.KubernetesResource, *restore.Database)
 
 	return nil
 }
@@ -118,3 +117,5 @@ func readFileContents(filename string) ([]byte, error) {
 
 	return ioutil.ReadAll(f)
 }
+
+func setRestoreStatus(restore *restoreservice.Restoreresult) {}
