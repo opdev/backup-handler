@@ -31,10 +31,6 @@ type RestoreresultView struct {
 	Namespace *string
 	// Key of backup tarball
 	BackupLocation *string
-	// name of pachyderm instance to restore to
-	DestinationName *string
-	// namespace to restore pachyderm to
-	DestinationNamespace *string
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string
 	// base64 encoded kubernetes object
@@ -55,8 +51,6 @@ var (
 			"name",
 			"namespace",
 			"backup_location",
-			"destination_name",
-			"destination_namespace",
 			"storage_secret",
 			"kubernetes_resource",
 			"database",

@@ -22,16 +22,14 @@ func BuildCreatePayload(restoreServiceCreateBody string) (*restoreservice.Restor
 	{
 		err = json.Unmarshal([]byte(restoreServiceCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"backup_location\": \"pachyderm-backup.tar.gz\",\n      \"destination_name\": \"pachyderm-restore\",\n      \"destination_namespace\": \"ai-namespace\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"storage_secret\": \"example-aws-secret\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"backup_location\": \"pachyderm-backup.tar.gz\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"storage_secret\": \"example-aws-secret\"\n   }'")
 		}
 	}
 	v := &restoreservice.Restore{
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		StorageSecret:        body.StorageSecret,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		BackupLocation:       body.BackupLocation,
+		Name:           body.Name,
+		Namespace:      body.Namespace,
+		StorageSecret:  body.StorageSecret,
+		BackupLocation: body.BackupLocation,
 	}
 
 	return v, nil
@@ -58,22 +56,20 @@ func BuildUpdatePayload(restoreServiceUpdateBody string) (*restoreservice.Restor
 	{
 		err = json.Unmarshal([]byte(restoreServiceUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"backup_location\": \"pachyderm-backup.tar.gz\",\n      \"created_at\": \"2019-10-12 07:20:50.52\",\n      \"database\": \"database.sql\",\n      \"deleted_at\": \"2019-10-12 07:20:54.52\",\n      \"destination_name\": \"pachyderm-restore\",\n      \"destination_namespace\": \"ai-namespace\",\n      \"id\": \"00000-090000-0000000-000000\",\n      \"kubernetes_resource\": \"pachyderm.yaml\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"storage_secret\": \"example-aws-secret\",\n      \"updated_at\": \"2019-10-12 07:20:52.52\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"backup_location\": \"pachyderm-backup.tar.gz\",\n      \"created_at\": \"2019-10-12 07:20:50.52\",\n      \"database\": \"database.sql\",\n      \"deleted_at\": \"2019-10-12 07:20:54.52\",\n      \"id\": \"00000-090000-0000000-000000\",\n      \"kubernetes_resource\": \"pachyderm.yaml\",\n      \"name\": \"pachdyderm-sample\",\n      \"namespace\": \"testing\",\n      \"storage_secret\": \"example-aws-secret\",\n      \"updated_at\": \"2019-10-12 07:20:52.52\"\n   }'")
 		}
 	}
 	v := &restoreservice.Restoreresult{
-		CreatedAt:            body.CreatedAt,
-		UpdatedAt:            body.UpdatedAt,
-		DeletedAt:            body.DeletedAt,
-		ID:                   body.ID,
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		BackupLocation:       body.BackupLocation,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		StorageSecret:        body.StorageSecret,
-		KubernetesResource:   body.KubernetesResource,
-		Database:             body.Database,
+		CreatedAt:          body.CreatedAt,
+		UpdatedAt:          body.UpdatedAt,
+		DeletedAt:          body.DeletedAt,
+		ID:                 body.ID,
+		Name:               body.Name,
+		Namespace:          body.Namespace,
+		BackupLocation:     body.BackupLocation,
+		StorageSecret:      body.StorageSecret,
+		KubernetesResource: body.KubernetesResource,
+		Database:           body.Database,
 	}
 
 	return v, nil

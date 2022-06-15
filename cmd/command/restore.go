@@ -7,10 +7,12 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/opdev/backup-handler/cmd/models"
 	restoreservice "github.com/opdev/backup-handler/gen/restore_service"
 	"github.com/walle/targz"
 	"k8s.io/apimachinery/pkg/types"
@@ -42,7 +44,9 @@ func StartRestore(restore *restoreservice.Restoreresult) error {
 
 	// TODO: store the payload to a database awaiting
 	// api request for status
-	log.Printf("cr => %s\ndb => %s\n", *restore.KubernetesResource, *restore.Database)
+	if err := completeRestore(restore); err != nil {
+		log.Printf("error updating status. %+v\n", err)
+	}
 
 	return nil
 }
@@ -118,4 +122,10 @@ func readFileContents(filename string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func setRestoreStatus(restore *restoreservice.Restoreresult) {}
+func completeRestore(restore *restoreservice.Restoreresult) error {
+	now := time.Now().UTC().Format("2006-01-02 15:04:05 UTC")
+
+	restore.DeletedAt = &now
+	_, err := models.DeleteRestore(restore)
+	return err
+}

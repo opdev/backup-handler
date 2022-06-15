@@ -22,10 +22,6 @@ type CreateRequestBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
 }
@@ -43,10 +39,6 @@ type UpdateRequestBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
 	// base64 encoded kubernetes object
@@ -68,10 +60,6 @@ type CreateResponseBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
 	// base64 encoded kubernetes object
@@ -93,10 +81,6 @@ type GetResponseBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
 	// base64 encoded kubernetes object
@@ -118,10 +102,6 @@ type UpdateResponseBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
 	// base64 encoded kubernetes object
@@ -143,10 +123,6 @@ type DeleteResponseBody struct {
 	Namespace *string `form:"namespace,omitempty" json:"namespace,omitempty" xml:"namespace,omitempty"`
 	// Key of backup tarball
 	BackupLocation *string `form:"backup_location,omitempty" json:"backup_location,omitempty" xml:"backup_location,omitempty"`
-	// name of pachyderm instance to restore to
-	DestinationName *string `form:"destination_name,omitempty" json:"destination_name,omitempty" xml:"destination_name,omitempty"`
-	// namespace to restore pachyderm to
-	DestinationNamespace *string `form:"destination_namespace,omitempty" json:"destination_namespace,omitempty" xml:"destination_namespace,omitempty"`
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string `form:"storage_secret,omitempty" json:"storage_secret,omitempty" xml:"storage_secret,omitempty"`
 	// base64 encoded kubernetes object
@@ -167,12 +143,10 @@ type CreateBackupNotFoundResponseBody struct {
 // "create" endpoint of the "Restore Service" service.
 func NewCreateRequestBody(p *restoreservice.Restore) *CreateRequestBody {
 	body := &CreateRequestBody{
-		Name:                 p.Name,
-		Namespace:            p.Namespace,
-		StorageSecret:        p.StorageSecret,
-		DestinationName:      p.DestinationName,
-		DestinationNamespace: p.DestinationNamespace,
-		BackupLocation:       p.BackupLocation,
+		Name:           p.Name,
+		Namespace:      p.Namespace,
+		StorageSecret:  p.StorageSecret,
+		BackupLocation: p.BackupLocation,
 	}
 	return body
 }
@@ -181,18 +155,16 @@ func NewCreateRequestBody(p *restoreservice.Restore) *CreateRequestBody {
 // "update" endpoint of the "Restore Service" service.
 func NewUpdateRequestBody(p *restoreservice.Restoreresult) *UpdateRequestBody {
 	body := &UpdateRequestBody{
-		CreatedAt:            p.CreatedAt,
-		UpdatedAt:            p.UpdatedAt,
-		DeletedAt:            p.DeletedAt,
-		ID:                   p.ID,
-		Name:                 p.Name,
-		Namespace:            p.Namespace,
-		BackupLocation:       p.BackupLocation,
-		DestinationName:      p.DestinationName,
-		DestinationNamespace: p.DestinationNamespace,
-		StorageSecret:        p.StorageSecret,
-		KubernetesResource:   p.KubernetesResource,
-		Database:             p.Database,
+		CreatedAt:          p.CreatedAt,
+		UpdatedAt:          p.UpdatedAt,
+		DeletedAt:          p.DeletedAt,
+		ID:                 p.ID,
+		Name:               p.Name,
+		Namespace:          p.Namespace,
+		BackupLocation:     p.BackupLocation,
+		StorageSecret:      p.StorageSecret,
+		KubernetesResource: p.KubernetesResource,
+		Database:           p.Database,
 	}
 	return body
 }
@@ -201,18 +173,16 @@ func NewUpdateRequestBody(p *restoreservice.Restoreresult) *UpdateRequestBody {
 // endpoint result from a HTTP "OK" response.
 func NewCreateRestoreresultOK(body *CreateResponseBody) *restoreserviceviews.RestoreresultView {
 	v := &restoreserviceviews.RestoreresultView{
-		CreatedAt:            body.CreatedAt,
-		UpdatedAt:            body.UpdatedAt,
-		DeletedAt:            body.DeletedAt,
-		ID:                   body.ID,
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		BackupLocation:       body.BackupLocation,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		StorageSecret:        body.StorageSecret,
-		KubernetesResource:   body.KubernetesResource,
-		Database:             body.Database,
+		CreatedAt:          body.CreatedAt,
+		UpdatedAt:          body.UpdatedAt,
+		DeletedAt:          body.DeletedAt,
+		ID:                 body.ID,
+		Name:               body.Name,
+		Namespace:          body.Namespace,
+		BackupLocation:     body.BackupLocation,
+		StorageSecret:      body.StorageSecret,
+		KubernetesResource: body.KubernetesResource,
+		Database:           body.Database,
 	}
 
 	return v
@@ -232,18 +202,16 @@ func NewCreateBackupNotFound(body *CreateBackupNotFoundResponseBody) *restoreser
 // result from a HTTP "OK" response.
 func NewGetRestoreresultOK(body *GetResponseBody) *restoreserviceviews.RestoreresultView {
 	v := &restoreserviceviews.RestoreresultView{
-		CreatedAt:            body.CreatedAt,
-		UpdatedAt:            body.UpdatedAt,
-		DeletedAt:            body.DeletedAt,
-		ID:                   body.ID,
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		BackupLocation:       body.BackupLocation,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		StorageSecret:        body.StorageSecret,
-		KubernetesResource:   body.KubernetesResource,
-		Database:             body.Database,
+		CreatedAt:          body.CreatedAt,
+		UpdatedAt:          body.UpdatedAt,
+		DeletedAt:          body.DeletedAt,
+		ID:                 body.ID,
+		Name:               body.Name,
+		Namespace:          body.Namespace,
+		BackupLocation:     body.BackupLocation,
+		StorageSecret:      body.StorageSecret,
+		KubernetesResource: body.KubernetesResource,
+		Database:           body.Database,
 	}
 
 	return v
@@ -253,18 +221,16 @@ func NewGetRestoreresultOK(body *GetResponseBody) *restoreserviceviews.Restorere
 // endpoint result from a HTTP "OK" response.
 func NewUpdateRestoreresultOK(body *UpdateResponseBody) *restoreserviceviews.RestoreresultView {
 	v := &restoreserviceviews.RestoreresultView{
-		CreatedAt:            body.CreatedAt,
-		UpdatedAt:            body.UpdatedAt,
-		DeletedAt:            body.DeletedAt,
-		ID:                   body.ID,
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		BackupLocation:       body.BackupLocation,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		StorageSecret:        body.StorageSecret,
-		KubernetesResource:   body.KubernetesResource,
-		Database:             body.Database,
+		CreatedAt:          body.CreatedAt,
+		UpdatedAt:          body.UpdatedAt,
+		DeletedAt:          body.DeletedAt,
+		ID:                 body.ID,
+		Name:               body.Name,
+		Namespace:          body.Namespace,
+		BackupLocation:     body.BackupLocation,
+		StorageSecret:      body.StorageSecret,
+		KubernetesResource: body.KubernetesResource,
+		Database:           body.Database,
 	}
 
 	return v
@@ -274,18 +240,16 @@ func NewUpdateRestoreresultOK(body *UpdateResponseBody) *restoreserviceviews.Res
 // endpoint result from a HTTP "OK" response.
 func NewDeleteRestoreresultOK(body *DeleteResponseBody) *restoreserviceviews.RestoreresultView {
 	v := &restoreserviceviews.RestoreresultView{
-		CreatedAt:            body.CreatedAt,
-		UpdatedAt:            body.UpdatedAt,
-		DeletedAt:            body.DeletedAt,
-		ID:                   body.ID,
-		Name:                 body.Name,
-		Namespace:            body.Namespace,
-		BackupLocation:       body.BackupLocation,
-		DestinationName:      body.DestinationName,
-		DestinationNamespace: body.DestinationNamespace,
-		StorageSecret:        body.StorageSecret,
-		KubernetesResource:   body.KubernetesResource,
-		Database:             body.Database,
+		CreatedAt:          body.CreatedAt,
+		UpdatedAt:          body.UpdatedAt,
+		DeletedAt:          body.DeletedAt,
+		ID:                 body.ID,
+		Name:               body.Name,
+		Namespace:          body.Namespace,
+		BackupLocation:     body.BackupLocation,
+		StorageSecret:      body.StorageSecret,
+		KubernetesResource: body.KubernetesResource,
+		Database:           body.Database,
 	}
 
 	return v

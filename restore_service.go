@@ -23,14 +23,12 @@ func NewRestoreService(logger *log.Logger) restoreservice.Service {
 // New restore request
 func (s *restoreServicesrvc) Create(ctx context.Context, p *restoreservice.Restore) (res *restoreservice.Restoreresult, err error) {
 	res = &restoreservice.Restoreresult{
-		CreatedAt:            utcTime(),
-		ID:                   genUUID(),
-		Name:                 p.Name,
-		Namespace:            p.Namespace,
-		StorageSecret:        p.StorageSecret,
-		DestinationName:      p.DestinationName,
-		DestinationNamespace: p.DestinationNamespace,
-		BackupLocation:       p.BackupLocation,
+		CreatedAt:      utcTime(),
+		ID:             genUUID(),
+		Name:           p.Name,
+		Namespace:      p.Namespace,
+		StorageSecret:  p.StorageSecret,
+		BackupLocation: p.BackupLocation,
 	}
 	s.logger.Print("restoreService.create")
 
@@ -65,8 +63,24 @@ func (s *restoreServicesrvc) Get(ctx context.Context, p *restoreservice.GetPaylo
 // Update restore request
 func (s *restoreServicesrvc) Update(ctx context.Context, p *restoreservice.Restoreresult) (res *restoreservice.Restoreresult, err error) {
 	p.UpdatedAt = utcTime()
-	res = p
+	res = &restoreservice.Restoreresult{
+		CreatedAt:          p.CreatedAt,
+		UpdatedAt:          utcTime(),
+		ID:                 p.ID,
+		Name:               p.Name,
+		Namespace:          p.Namespace,
+		StorageSecret:      p.StorageSecret,
+		BackupLocation:     p.BackupLocation,
+		KubernetesResource: p.KubernetesResource,
+		Database:           p.Database,
+	}
 	s.logger.Print("restoreService.update")
+
+	_, err = models.UpdateRestore(res)
+	if err != nil {
+		return nil, err
+	}
+
 	return
 }
 

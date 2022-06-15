@@ -657,14 +657,6 @@ definitions:
         type: string
         description: Key of backup tarball
         example: pachyderm-backup.tar.gz
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       name:
         type: string
         description: Name of pachyderm instance to restore to
@@ -679,8 +671,6 @@ definitions:
         example: example-aws-secret
     example:
       backup_location: pachyderm-backup.tar.gz
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       name: pachdyderm-sample
       namespace: testing
       storage_secret: example-aws-secret
@@ -702,14 +692,6 @@ definitions:
       deleted_at:
         type: string
         example: "2019-10-12 07:20:54.52"
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       id:
         type: string
         example: 00000-090000-0000000-000000
@@ -738,8 +720,6 @@ definitions:
       created_at: "2019-10-12 07:20:50.52"
       database: database.sql
       deleted_at: "2019-10-12 07:20:54.52"
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       id: 00000-090000-0000000-000000
       kubernetes_resource: pachyderm.yaml
       name: pachdyderm-sample
@@ -764,14 +744,6 @@ definitions:
       deleted_at:
         type: string
         example: "2019-10-12 07:20:54.52"
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       id:
         type: string
         example: 00000-090000-0000000-000000
@@ -800,8 +772,6 @@ definitions:
       created_at: "2019-10-12 07:20:50.52"
       database: database.sql
       deleted_at: "2019-10-12 07:20:54.52"
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       id: 00000-090000-0000000-000000
       kubernetes_resource: pachyderm.yaml
       name: pachdyderm-sample
@@ -826,14 +796,6 @@ definitions:
       deleted_at:
         type: string
         example: "2019-10-12 07:20:54.52"
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       id:
         type: string
         example: 00000-090000-0000000-000000
@@ -862,8 +824,6 @@ definitions:
       created_at: "2019-10-12 07:20:50.52"
       database: database.sql
       deleted_at: "2019-10-12 07:20:54.52"
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       id: 00000-090000-0000000-000000
       kubernetes_resource: pachyderm.yaml
       name: pachdyderm-sample
@@ -888,14 +848,6 @@ definitions:
       deleted_at:
         type: string
         example: "2019-10-12 07:20:54.52"
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       id:
         type: string
         example: 00000-090000-0000000-000000
@@ -923,8 +875,6 @@ definitions:
       created_at: "2019-10-12 07:20:50.52"
       database: database.sql
       deleted_at: "2019-10-12 07:20:54.52"
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       id: 00000-090000-0000000-000000
       kubernetes_resource: pachyderm.yaml
       name: pachdyderm-sample
@@ -949,14 +899,6 @@ definitions:
       deleted_at:
         type: string
         example: "2019-10-12 07:20:54.52"
-      destination_name:
-        type: string
-        description: name of pachyderm instance to restore to
-        example: pachyderm-restore
-      destination_namespace:
-        type: string
-        description: namespace to restore pachyderm to
-        example: ai-namespace
       id:
         type: string
         example: 00000-090000-0000000-000000
@@ -985,8 +927,6 @@ definitions:
       created_at: "2019-10-12 07:20:50.52"
       database: database.sql
       deleted_at: "2019-10-12 07:20:54.52"
-      destination_name: pachyderm-restore
-      destination_namespace: ai-namespace
       id: 00000-090000-0000000-000000
       kubernetes_resource: pachyderm.yaml
       name: pachdyderm-sample

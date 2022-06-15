@@ -105,14 +105,6 @@ var Restore = Type("Restore", func() {
 		Description("Kubernetes secret containing S3 storage credentials")
 		Example("example-aws-secret")
 	})
-	Attribute("destination_name", String, func() {
-		Description("name of pachyderm instance to restore to")
-		Example("pachyderm-restore")
-	})
-	Attribute("destination_namespace", String, func() {
-		Description("namespace to restore pachyderm to")
-		Example("ai-namespace")
-	})
 	Attribute("backup_location", String, func() {
 		Description("Key of backup tarball")
 		Example("pachyderm-backup.tar.gz")
@@ -138,8 +130,6 @@ var RestoreResult = ResultType("RestoreResult", func() {
 		Attribute("name")
 		Attribute("namespace")
 		Attribute("backup_location")
-		Attribute("destination_name")
-		Attribute("destination_namespace")
 		Attribute("storage_secret")
 		Attribute("kubernetes_resource", String, func() {
 			Description("base64 encoded kubernetes object")
