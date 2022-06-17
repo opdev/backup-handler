@@ -60,10 +60,6 @@ type Restore struct {
 	Namespace *string
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string
-	// name of pachyderm instance to restore to
-	DestinationName *string
-	// namespace to restore pachyderm to
-	DestinationNamespace *string
 	// Key of backup tarball
 	BackupLocation *string
 }
@@ -81,10 +77,6 @@ type Restoreresult struct {
 	Namespace *string
 	// Key of backup tarball
 	BackupLocation *string
-	// name of pachyderm instance to restore to
-	DestinationName *string
-	// namespace to restore pachyderm to
-	DestinationNamespace *string
 	// Kubernetes secret containing S3 storage credentials
 	StorageSecret *string
 	// base64 encoded kubernetes object
@@ -120,18 +112,16 @@ func NewViewedRestoreresult(res *Restoreresult, view string) *restoreserviceview
 // Restoreresult.
 func newRestoreresult(vres *restoreserviceviews.RestoreresultView) *Restoreresult {
 	res := &Restoreresult{
-		CreatedAt:            vres.CreatedAt,
-		UpdatedAt:            vres.UpdatedAt,
-		DeletedAt:            vres.DeletedAt,
-		ID:                   vres.ID,
-		Name:                 vres.Name,
-		Namespace:            vres.Namespace,
-		BackupLocation:       vres.BackupLocation,
-		DestinationName:      vres.DestinationName,
-		DestinationNamespace: vres.DestinationNamespace,
-		StorageSecret:        vres.StorageSecret,
-		KubernetesResource:   vres.KubernetesResource,
-		Database:             vres.Database,
+		CreatedAt:          vres.CreatedAt,
+		UpdatedAt:          vres.UpdatedAt,
+		DeletedAt:          vres.DeletedAt,
+		ID:                 vres.ID,
+		Name:               vres.Name,
+		Namespace:          vres.Namespace,
+		BackupLocation:     vres.BackupLocation,
+		StorageSecret:      vres.StorageSecret,
+		KubernetesResource: vres.KubernetesResource,
+		Database:           vres.Database,
 	}
 	return res
 }
@@ -140,18 +130,16 @@ func newRestoreresult(vres *restoreserviceviews.RestoreresultView) *Restoreresul
 // RestoreresultView using the "default" view.
 func newRestoreresultView(res *Restoreresult) *restoreserviceviews.RestoreresultView {
 	vres := &restoreserviceviews.RestoreresultView{
-		CreatedAt:            res.CreatedAt,
-		UpdatedAt:            res.UpdatedAt,
-		DeletedAt:            res.DeletedAt,
-		ID:                   res.ID,
-		Name:                 res.Name,
-		Namespace:            res.Namespace,
-		BackupLocation:       res.BackupLocation,
-		DestinationName:      res.DestinationName,
-		DestinationNamespace: res.DestinationNamespace,
-		StorageSecret:        res.StorageSecret,
-		KubernetesResource:   res.KubernetesResource,
-		Database:             res.Database,
+		CreatedAt:          res.CreatedAt,
+		UpdatedAt:          res.UpdatedAt,
+		DeletedAt:          res.DeletedAt,
+		ID:                 res.ID,
+		Name:               res.Name,
+		Namespace:          res.Namespace,
+		BackupLocation:     res.BackupLocation,
+		StorageSecret:      res.StorageSecret,
+		KubernetesResource: res.KubernetesResource,
+		Database:           res.Database,
 	}
 	return vres
 }

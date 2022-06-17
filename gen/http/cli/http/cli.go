@@ -42,8 +42,6 @@ func UsageExamples() string {
    }'` + "\n" +
 		os.Args[0] + ` restore-service create --body '{
       "backup_location": "pachyderm-backup.tar.gz",
-      "destination_name": "pachyderm-restore",
-      "destination_namespace": "ai-namespace",
       "name": "pachdyderm-sample",
       "namespace": "testing",
       "storage_secret": "example-aws-secret"
@@ -337,8 +335,6 @@ New restore request
 Example:
     %[1]s restore-service create --body '{
       "backup_location": "pachyderm-backup.tar.gz",
-      "destination_name": "pachyderm-restore",
-      "destination_namespace": "ai-namespace",
       "name": "pachdyderm-sample",
       "namespace": "testing",
       "storage_secret": "example-aws-secret"
@@ -369,8 +365,6 @@ Example:
       "created_at": "2019-10-12 07:20:50.52",
       "database": "database.sql",
       "deleted_at": "2019-10-12 07:20:54.52",
-      "destination_name": "pachyderm-restore",
-      "destination_namespace": "ai-namespace",
       "id": "00000-090000-0000000-000000",
       "kubernetes_resource": "pachyderm.yaml",
       "name": "pachdyderm-sample",
