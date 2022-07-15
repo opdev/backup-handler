@@ -34,6 +34,43 @@ func kubeClient(config *rest.Config) (*kubernetes.Clientset, error) {
 	return kubernetes.NewForConfig(config)
 }
 
+type APIClient struct {
+	config  *rest.Config
+	clients *kubernetes.Clientset
+}
+
+// NewAPIClient allow users to get a way to interact with Openshift
+func NewAPIClient() (*APIClient, error) {
+	config, err := kubeConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	clients, err := kubeClient(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &APIClient{
+		config:  config,
+		clients: clients,
+	}, nil
+}
+
+func (r *APIClient) GetPod(ctx context.Context, pod types.NamespacedName) (*corev1.Pod, error) {
+	return r.clients.CoreV1().Pods(pod.Namespace).Get(ctx, pod.Name, metav1.GetOptions{})
+}
+
+// Client returns the kubernetes clientsets
+func (r *APIClient) Client() *kubernetes.Clientset {
+	return r.clients
+}
+
+// Config returns the kubernetes rest config
+func (r *APIClient) Config() *rest.Config {
+	return r.config
+}
+
 // ExecResponse provides a mechanism for an
 // executed command to return output following the
 // completion of a command

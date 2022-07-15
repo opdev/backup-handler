@@ -91,5 +91,20 @@ func (s *restoreServicesrvc) Delete(ctx context.Context, p *restoreservice.Delet
 		DeletedAt: utcTime(),
 	}
 	s.logger.Print("restoreService.delete")
+
+	if err = models.GetRestore(res); err != nil {
+		return nil, err
+	}
+
+	// TODO: copy and execute the database dump in the Postgres pod
+	if err := restoreDatabase(res); err != nil {
+		return nil, err
+	}
+
+	// mark the restore as deleted / completed
+	if _, err := models.DeleteRestore(res); err != nil {
+		return nil, err
+	}
+
 	return
 }
