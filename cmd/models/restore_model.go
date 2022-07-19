@@ -133,7 +133,7 @@ func DeleteRestore(restore *restoreservice.Restoreresult) (int64, error) {
 }
 
 func deleteRestore(ctx context.Context, db *sql.DB, restore *restoreservice.Restoreresult) (int64, error) {
-	query := `UPDATE restores SET updated_at = ?, deleted_at = ?, backup_location = ?, storage_secret = ?, kubernetes_object = ?, db = ? WHERE id = ?`
+	query := `UPDATE restores SET deleted_at = ? WHERE id = ?`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
@@ -142,12 +142,7 @@ func deleteRestore(ctx context.Context, db *sql.DB, restore *restoreservice.Rest
 	defer stmt.Close()
 
 	results, err := stmt.ExecContext(ctx,
-		restore.UpdatedAt,
 		restore.DeletedAt,
-		restore.BackupLocation,
-		restore.StorageSecret,
-		restore.KubernetesResource,
-		restore.Database,
 		restore.ID,
 	)
 	if err != nil {

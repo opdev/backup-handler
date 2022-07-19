@@ -28,12 +28,12 @@ import (
 func RunBackup(backup *backupservice.Backupresult) error {
 	logger := log.New(os.Stderr, "[backuprunner] ", log.Ldate|log.Ltime)
 	logger.Println("Starting backup..")
-	results, err := execBackup(logger, backup)
+	results, err := execBackup(backup)
 	if err != nil {
 		return err
 	}
 
-	if err := writeBackup(logger, backup, results.Output()); err != nil {
+	if err := writeBackup(backup, results.Output()); err != nil {
 		return err
 	}
 
@@ -48,7 +48,7 @@ func RunBackup(backup *backupservice.Backupresult) error {
 	return markBackupCompleted(logger, backup)
 }
 
-func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output string) error {
+func writeBackup(backup *backupservice.Backupresult, output string) error {
 	var t time.Time = time.Now().UTC()
 	timestamp := t.Format("200601021504")
 	backupDir := path.Join(
@@ -79,7 +79,7 @@ func writeBackup(logger *log.Logger, backup *backupservice.Backupresult, output 
 	}
 	defer cr.Close()
 
-	dump, err := os.Create(path.Join(backupDir, "database.sql"))
+	dump, err := os.Create(path.Join(backupDir, "database.tar"))
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func markBackupCompleted(logger *log.Logger, backup *backupservice.Backupresult)
 	return nil
 }
 
-func execBackup(logger *log.Logger, backup *backupservice.Backupresult) (*ExecResponse, error) {
+func execBackup(backup *backupservice.Backupresult) (*ExecResponse, error) {
 	cmdBuilder := &Builder{
 		cmd: *backup.Command,
 	}

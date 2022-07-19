@@ -19,7 +19,7 @@ import (
 )
 
 // StartRestore command is the invoked to start restoring from backup
-func StartRestore(restore *restoreservice.Restoreresult) error {
+func StartRestore(restore *restoreservice.Restoreresult, logger *log.Logger) error {
 	// backupKey refers to the key of the object to be
 	// restored from the S3 storage bucket
 	asset := path.Join(
@@ -33,7 +33,7 @@ func StartRestore(restore *restoreservice.Restoreresult) error {
 		return err
 	}
 
-	log.Printf("%d bytes of %s downloaded.\n", size, path.Base(asset))
+	logger.Printf("%d bytes of %s downloaded.\n", size, path.Base(asset))
 	if err := targz.Extract(asset, "/tmp"); err != nil {
 		return err
 	}
@@ -44,8 +44,14 @@ func StartRestore(restore *restoreservice.Restoreresult) error {
 
 	// TODO: store the payload to a database awaiting
 	// api request for status
-	if err := completeRestore(restore); err != nil {
-		log.Printf("error updating status. %+v\n", err)
+	now := time.Now().UTC().Format("2006-01-02 15:04:05 UTC")
+	restore.UpdatedAt = &now
+	changes, err := models.UpdateRestore(restore)
+	if err != nil {
+		return err
+	}
+	if changes == 1 {
+		logger.Println("backup extracted to /tmp")
 	}
 
 	return nil
@@ -88,7 +94,9 @@ func downloadBackup(restore *restoreservice.Restoreresult, backupFile string) (i
 	})
 }
 
-// Load backup takes the backup directory as a parameter
+// Load backup takes the backup directory and restore as parameters
+// updates the restore object with the database dump and custom resource
+// and returns an error
 func loadBackup(backup string, restore *restoreservice.Restoreresult) error {
 	// Split the string at the periods
 	// and get the first item in the slice
@@ -99,7 +107,7 @@ func loadBackup(backup string, restore *restoreservice.Restoreresult) error {
 		return err
 	}
 
-	db, err := readFileContents(path.Join(dir, "database.sql"))
+	db, err := readFileContents(path.Join(dir, "database.tar"))
 	if err != nil {
 		return err
 	}
@@ -120,12 +128,4 @@ func readFileContents(filename string) ([]byte, error) {
 	defer f.Close()
 
 	return ioutil.ReadAll(f)
-}
-
-func completeRestore(restore *restoreservice.Restoreresult) error {
-	now := time.Now().UTC().Format("2006-01-02 15:04:05 UTC")
-
-	restore.DeletedAt = &now
-	_, err := models.DeleteRestore(restore)
-	return err
 }

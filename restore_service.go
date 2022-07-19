@@ -36,7 +36,7 @@ func (s *restoreServicesrvc) Create(ctx context.Context, p *restoreservice.Resto
 		return nil, err
 	}
 
-	if err := command.StartRestore(res); err != nil {
+	if err := command.StartRestore(res, s.logger); err != nil {
 		return nil,
 			&restoreservice.BackupNotFound{
 				Message: "backup resource not found.",
@@ -87,8 +87,7 @@ func (s *restoreServicesrvc) Update(ctx context.Context, p *restoreservice.Resto
 // Mark complete restore request
 func (s *restoreServicesrvc) Delete(ctx context.Context, p *restoreservice.DeletePayload) (res *restoreservice.Restoreresult, err error) {
 	res = &restoreservice.Restoreresult{
-		ID:        p.ID,
-		DeletedAt: utcTime(),
+		ID: p.ID,
 	}
 	s.logger.Print("restoreService.delete")
 
@@ -97,11 +96,12 @@ func (s *restoreServicesrvc) Delete(ctx context.Context, p *restoreservice.Delet
 	}
 
 	// TODO: copy and execute the database dump in the Postgres pod
-	if err := restoreDatabase(res); err != nil {
+	if err := restoreDatabase(res, s.logger); err != nil {
 		return nil, err
 	}
 
 	// mark the restore as deleted / completed
+	res.DeletedAt = utcTime()
 	if _, err := models.DeleteRestore(res); err != nil {
 		return nil, err
 	}

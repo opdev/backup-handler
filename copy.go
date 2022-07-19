@@ -2,10 +2,13 @@ package backuphandler
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/opdev/backup-handler/cmd/command"
 	restoreservice "github.com/opdev/backup-handler/gen/restore_service"
@@ -16,7 +19,7 @@ import (
 	"k8s.io/kubectl/pkg/scheme"
 )
 
-func restoreDatabase(restore *restoreservice.Restoreresult) error {
+func restoreDatabase(restore *restoreservice.Restoreresult, logger *log.Logger) error {
 	var (
 		namespace string
 		container string
@@ -28,6 +31,37 @@ func restoreDatabase(restore *restoreservice.Restoreresult) error {
 		pod = "postgres-0"
 	}
 
+	// the cleanup function removes backup directory
+	var cleanup = func() error {
+		tarball := path.Join(
+			"/",
+			"tmp",
+			path.Base(*restore.BackupLocation),
+		)
+
+		if err := os.Remove(tarball); err != nil {
+			if !errors.Is(err, os.ErrNotExist) {
+				return err
+			}
+		}
+
+		dir := tarball
+		for strings.Contains(dir, ".") {
+			dir = dir[:len(dir)-len(filepath.Ext(dir))]
+		}
+
+		dirInfo, err := os.Stat(dir)
+		if err != nil {
+			return err
+		}
+
+		if dirInfo.IsDir() {
+			return os.RemoveAll(dir)
+		}
+
+		return nil
+	}
+
 	// write dump to file
 	dbDump, err := func(db string) (string, error) {
 		tmpdir, err := os.MkdirTemp(path.Join("/", "tmp"), "db-")
@@ -35,7 +69,7 @@ func restoreDatabase(restore *restoreservice.Restoreresult) error {
 			return "", err
 		}
 
-		f, err := os.Create(path.Join(tmpdir, "dump.sql"))
+		f, err := os.Create(path.Join(tmpdir, "database.tar"))
 		if err != nil {
 			return "", err
 		}
@@ -67,7 +101,7 @@ func restoreDatabase(restore *restoreservice.Restoreresult) error {
 				Pod:       pod,
 				Container: container,
 				Namespace: namespace,
-				Command:   []string{"psql", "pachyderm", "-f", "/tmp/restore.sql"},
+				Command:   []string{"sh", "-c", "pg_restore -U pachyderm -Ft -c -d pachyderm < /tmp/database.tar && rm -f /tmp/database.tar"},
 			})
 		if err != nil {
 			return nil, err
@@ -85,6 +119,10 @@ func restoreDatabase(restore *restoreservice.Restoreresult) error {
 
 	if response.Error() != "" {
 		fmt.Println(response.Error())
+	}
+
+	if err := cleanup(); err != nil {
+		return err
 	}
 
 	return nil
