@@ -1,4 +1,4 @@
-FROM golang:1.17 as builder
+FROM golang:1.18 as builder
 
 WORKDIR /app
 COPY go.sum go.sum
@@ -23,7 +23,10 @@ ENV USER_ID=1009
 WORKDIR /
 COPY --from=builder /app/backup-handler .
 COPY migrations migrations
-RUN mkdir -p -m 775 /var/backup-handler && microdnf install curl sqlite && microdnf clean all
+RUN microdnf upgrade -y && \
+ mkdir -p -m 775 /var/backup-handler && \
+ microdnf install sqlite && \
+ microdnf clean all
 USER ${USER_ID}
 CMD ["/backup-handler"]
 EXPOSE 8890
